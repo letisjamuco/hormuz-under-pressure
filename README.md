@@ -2,7 +2,7 @@
 
 > An interactive data visualization tracing how disruptions around the Strait of Hormuz propagate from oil markets to airline ticket prices.
 
-[Live website](#) · [Explainer video](#) · [Project proposal](docs/proposal.pdf)
+[Live website](https://letisjamuco.github.io/hormuz-to-boarding-gate) · [Project proposal](docs/proposal.pdf)
 
 A geopolitical event 4,000 km away. An oil price spike measured in days. A ticket price you pay in months. This project visualises that chain.
 
