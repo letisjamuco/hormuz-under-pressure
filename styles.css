@@ -1788,3 +1788,74 @@ body {
   --t-base-w: 1200px;
   --t-base-h: 900px;
 }
+
+/* ---------------------------------------------------------------------
+   CH03 Tableau embeds: Alexandra views
+   --------------------------------------------------------------------- */
+.chapter__layout--tableau-stack {
+  grid-template-columns: 1fr !important;
+}
+
+.tableau-stack {
+  width: min(100%, 1180px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
+}
+
+.tableau-panel {
+  min-width: 0;
+}
+
+.tableau-panel__header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  margin: 0 0 0.45rem;
+  padding: 0 0.35rem;
+}
+
+.tableau-panel__eyebrow {
+  font-family: var(--font-mono);
+  color: var(--accent-orange);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.tableau-panel__header h3 {
+  margin: 0;
+  font-size: clamp(1.1rem, 1.6vw, 1.45rem);
+  color: var(--ink-deep);
+}
+
+/* Match these to the dashboard fixed sizes in Tableau if needed. */
+.tableau-viz-scaler--ch3a {
+  --t-base-w: 1200px;
+  --t-base-h: 1080px;
+}
+
+.tableau-viz-scaler--ch3b {
+  --t-base-w: 1200px;
+  --t-base-h: 760px;
+}
+
+/* Give CH03 a little more vertical breathing room because it now has 2 embeds. */
+#chapter-3 {
+  min-height: auto !important;
+}
+
+#chapter-3 .tableau-embed-wrap {
+  max-width: 1180px;
+}
+
+/* If Alexandra's dashboards are edited to a different fixed size, change only
+   --t-base-w and --t-base-h above; script.js will rescale them automatically. */
+
+/* ch3-fixed-height-note:
+   CH·03A needs a taller Tableau canvas because the small-multiple rows list many airlines.
+   If Alexandra republishes the Tableau dashboard with a different fixed size, update
+   --t-base-h in .tableau-viz-scaler--ch3a instead of cropping the embed.
+*/
