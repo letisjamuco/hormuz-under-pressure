@@ -339,34 +339,59 @@
         <p class="chapter__kicker">Some airlines pass the cost to you. Others absorb it. Most do both, partially.</p>
       </header>
 
-      <div class="chapter__layout">
+      <div class="chapter__layout chapter__layout--tableau-full chapter__layout--tableau-stack">
         <aside class="chapter__notes">
           <p>
             Once jet fuel costs rise, airlines have a choice: pass the cost to passengers,
             absorb it through margin, or hedge with fuel contracts signed in advance.
-            Most carriers do all three, in different proportions, depending on
-            their business model and the route.
+            The two views below compare the airline response from different angles.
           </p>
           <p>
-            Filter by region or route class to see which carriers move first, which move most,
-            and which barely move at all.
+            First, the small multiples show each airline as its own mini-story. Then,
+            the slope view compares how prices move from the baseline period into the shock period.
           </p>
           <p class="chapter__source">Data source: Kaggle Airline Ticket Prices vs Oil &amp; Fuel Costs</p>
         </aside>
 
-        <div class="placeholder placeholder--chart" data-owner="Alexandra" data-chapter="3">
-          <div class="placeholder__inner">
-            <div class="placeholder__icon">AIR</div>
-            <div class="placeholder__title">Tableau Embed</div>
-            <div class="placeholder__desc">
-              CH·03, Airline comparison (slope chart or small multiples)<br />
-              filterable by region, route class
+        <div class="tableau-stack">
+          <article class="tableau-panel">
+            <div class="tableau-panel__header">
+              <span class="tableau-panel__eyebrow">View 1</span>
+              <h3>CH·03A · Airline response by carrier</h3>
             </div>
-            <div class="placeholder__owner">Owner: Alexandra K. · Tableau Public</div>
-            <div class="placeholder__embed-hint">
-              Replace with Tableau iframe embed
+            <p class="tableau-panel__note">Scroll inside this view to inspect the full airline list.</p>
+            <div class="tableau-embed-wrap tableau-embed-wrap--scroll" data-owner="Alexandra" data-chapter="3a">
+              <div class="tableau-viz-scaler tableau-viz-scaler--ch3a">
+                <tableau-viz
+                  id="viz-ch3-smallmultiples"
+                  src="https://public.tableau.com/views/CH3_airline_response/CH3-smallmultiples"
+                  toolbar="bottom"
+                  hide-tabs
+                  device="desktop"
+                  touch-optimize="true">
+                </tableau-viz>
+              </div>
             </div>
-          </div>
+          </article>
+
+          <article class="tableau-panel">
+            <div class="tableau-panel__header">
+              <span class="tableau-panel__eyebrow">View 2</span>
+              <h3>CH·03B · Before vs during the shock</h3>
+            </div>
+            <div class="tableau-embed-wrap" data-owner="Alexandra" data-chapter="3b">
+              <div class="tableau-viz-scaler tableau-viz-scaler--ch3b">
+                <tableau-viz
+                  id="viz-ch3-slope"
+                  src="https://public.tableau.com/views/CH3_airline_response/CH3-slopebefore-during"
+                  toolbar="bottom"
+                  hide-tabs
+                  device="desktop"
+                  touch-optimize="true">
+                </tableau-viz>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </div>
