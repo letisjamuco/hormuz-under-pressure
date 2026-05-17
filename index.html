@@ -420,32 +420,23 @@
         <p class="chapter__kicker">What you actually pay, broken into the parts you don't normally see.</p>
       </header>
 
-      <div class="chapter__layout chapter__layout--tableau-full chapter__layout--tableau-ticket">
-        <aside class="chapter__notes">
+      <div class="chapter__layout chapter__layout--full">
+        <aside class="chapter__notes chapter__notes--inline chapter__notes--compact">
           <p>
-            A ticket is not one number. It is a stack of three: the base fare,
-            the fuel surcharge, and the taxes and fees. The surcharge is the part
-            that moves with oil.
+            Before the shock, the ticket is mostly base fare. During the shock,
+            the fuel surcharge becomes much more visible to the passenger.
           </p>
-          <p>
-            This view compares the ticket breakdown before and during the shock,
-            so the passenger-facing cost change is easier to read.
-          </p>
-          <p class="chapter__source">Data source: Kaggle Airline Ticket Prices vs Oil &amp; Fuel Costs</p>
         </aside>
 
-        <div class="tableau-embed-wrap" data-owner="Alexandra" data-chapter="4">
-          <div class="tableau-viz-scaler tableau-viz-scaler--ch4">
-            <tableau-viz
-              id="viz-ch4-boardingpass"
-              src="https://public.tableau.com/views/CH3_airline_response/CH4-boardingpassbreakdown"
-              toolbar="bottom"
-              hide-tabs
-              device="desktop"
-              touch-optimize="true">
-            </tableau-viz>
-          </div>
+        <div class="d3-ticket-wrap" id="d3-ticket-breakdown">
+          <iframe
+            src="d3/ticket-breakdown.html"
+            title="CH·04 interactive passenger ticket breakdown"
+            loading="lazy"
+            class="d3-ticket-frame">
+          </iframe>
         </div>
+        <p class="chapter__source chapter__source--below-embed">Data source: Kaggle Airline Ticket Prices vs Oil &amp; Fuel Costs · D3.js</p>
       </div>
     </div>
   </section>

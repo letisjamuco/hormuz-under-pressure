@@ -1898,22 +1898,56 @@ body {
 }
 
 /* ---------------------------------------------------------------------
-   CH04 Tableau embed: boarding pass breakdown
+   CH04 custom D3 boarding-pass ticket breakdown
    --------------------------------------------------------------------- */
-.chapter__layout--tableau-ticket {
+#chapter-4 .chapter__layout--full {
   grid-template-columns: 1fr !important;
-  gap: 1.1rem !important;
+  gap: 0.75rem !important;
 }
 
-#chapter-4 .tableau-viz-scaler--ch4 {
-  --t-base-w: 1200px;
-  --t-base-h: 780px;
+#chapter-4 .chapter__notes--inline {
+  max-width: 960px !important;
+  margin-bottom: 0.7rem !important;
 }
 
-#chapter-4 {
-  min-height: auto !important;
+#chapter-4 .chapter__notes--inline p {
+  font-size: 0.96rem;
+  line-height: 1.5;
 }
 
-#chapter-4 .tableau-embed-wrap {
-  max-width: 1180px;
+.d3-ticket-wrap {
+  width: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(200, 214, 228, 0.65);
+  box-shadow: 0 24px 60px -40px rgba(12, 39, 72, 0.55);
+  background: #e8f0f8;
+}
+
+.d3-ticket-frame {
+  display: block;
+  width: 100%;
+  height: 660px;
+  border: 0;
+  background: #e8f0f8;
+}
+
+#chapter-4 .chapter__source--below-embed {
+  display: block;
+  margin: 0.45rem 0 0 !important;
+  padding-top: 0 !important;
+  border-top: 0 !important;
+  text-align: right !important;
+  color: var(--ink-light);
+  font-size: 0.52rem !important;
+  letter-spacing: 0.035em !important;
+}
+
+@media (max-width: 900px) {
+  .d3-ticket-frame {
+    height: 1150px;
+  }
+  #chapter-4 .chapter__source--below-embed {
+    text-align: left !important;
+  }
 }

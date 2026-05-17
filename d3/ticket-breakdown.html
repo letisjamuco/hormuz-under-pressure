@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CH·04 Passenger Ticket Breakdown</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Bebas+Neue&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="ticket-breakdown.css" />
+</head>
+<body>
+  <main id="app" aria-label="Interactive passenger ticket breakdown">
+    <section class="control-strip">
+      <div class="period-note">
+        <span class="eyebrow">comparison window</span>
+        <strong>Before shock vs during shock</strong>
+        <span>Baseline: Jun–Nov 2025 · Shock: Dec 2025–Mar 2026</span>
+      </div>
+
+      <label>
+        <span>Airline</span>
+        <select id="airline-filter"></select>
+      </label>
+      <label>
+        <span>Region</span>
+        <select id="region-filter"></select>
+      </label>
+      <label>
+        <span>Route class</span>
+        <select id="class-filter"></select>
+      </label>
+      <button id="reset-filters" type="button">Reset</button>
+    </section>
+
+    <section class="ticket-shell">
+      <div class="ticket-main">
+        <header class="ticket-head">
+          <div>
+            <span class="brand">M126 Airways</span>
+            <h1>Passenger ticket</h1>
+            <p>The same average trip, priced before and during the Hormuz shock.</p>
+          </div>
+          <div class="selected-context" id="selected-context">All airlines · all regions · all route classes</div>
+        </header>
+
+        <div class="route-band">
+          <div>
+            <span>from</span>
+            <strong>Baseline</strong>
+            <small>Jun–Nov 2025</small>
+          </div>
+          <div class="route-arrow">→</div>
+          <div>
+            <span>to</span>
+            <strong>Shock period</strong>
+            <small>Dec 2025–Mar 2026</small>
+          </div>
+        </div>
+
+        <div class="viz-area">
+          <svg id="ticket-chart" role="img" aria-label="Stacked ticket price breakdown before and during the shock"></svg>
+        </div>
+
+        <div class="component-legend" id="component-legend" aria-label="Legend for ticket components"></div>
+      </div>
+
+      <aside class="ticket-stub">
+        <div class="stub-top">
+          <span>Passenger</span>
+          <strong>YOU</strong>
+        </div>
+
+        <div class="change-card">
+          <span>Total ticket change</span>
+          <strong id="total-change">—</strong>
+          <small id="total-change-pct">—</small>
+        </div>
+
+        <div class="change-card change-card--fuel">
+          <span>Fuel surcharge change</span>
+          <strong id="fuel-change">—</strong>
+          <small id="fuel-change-pct">—</small>
+        </div>
+
+        <div class="mini-receipt">
+          <div><span>Base fare</span><strong id="base-delta">—</strong></div>
+          <div><span>Taxes & fees</span><strong id="tax-delta">—</strong></div>
+          <div><span>Records used</span><strong id="records-used">—</strong></div>
+        </div>
+
+        <div class="barcode" aria-hidden="true"></div>
+        <p class="stub-note">Orange is the fuel-sensitive part of the ticket.</p>
+      </aside>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="ticket-breakdown.js"></script>
+</body>
+</html>
