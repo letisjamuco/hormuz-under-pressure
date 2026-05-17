@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CH·05 Route Impact Explorer</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="route-map.css" />
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <main id="app">
+    <section class="fuel-context" aria-label="Fuel context">
+      <div class="fuel-copy">
+        <span class="eyebrow">Fuel context</span>
+        <strong>Fuel price change in the selected period.</strong><span class="fuel-note">The first month shown starts at 100. The labels show total change.</span>
+      </div>
+      <svg id="fuel-chart" role="img" aria-label="Indexed Brent and jet fuel chart"></svg>
+    </section>
+
+    <section id="controls" aria-label="Route map controls">
+      <div class="filter-group">
+        <label for="period-filter"><span class="plane-mark">✈</span>Period</label>
+        <select id="period-filter">
+          <option value="during" selected>During shock · Dec 2025-Mar 2026</option>
+          <option value="before">Before shock · Dec 2024-Nov 2025</option>
+          <option value="both">Before + during · Dec 2024-Mar 2026</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="status-filter"><span class="plane-mark">✈</span>Status</label>
+        <select id="status-filter">
+          <option value="impacted" selected>Impacted only</option>
+          <option value="all">All statuses</option>
+          <option value="Cancelled">Cancelled only</option>
+          <option value="Rerouted">Rerouted only</option>
+          <option value="Normal">Normal only</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="hub-filter"><span class="plane-mark">✈</span>City / hub</label>
+        <select id="hub-filter"><option value="all" selected>All cities</option></select>
+      </div>
+
+      <div class="filter-group">
+        <label for="airline-filter"><span class="plane-mark">✈</span>Airline</label>
+        <select id="airline-filter"><option value="all" selected>All airlines</option></select>
+      </div>
+
+      <div class="filter-group compact">
+        <label for="topn-filter"><span class="plane-mark">✈</span>Show</label>
+        <select id="topn-filter">
+          <option value="10" selected>Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="40">Top 40</option>
+          <option value="0">All</option>
+        </select>
+      </div>
+
+      <button type="button" id="reset-all" class="ghost-button"><span class="plane-mark">✈</span>Reset</button>
+    </section>
+
+    <section id="stats-bar" aria-live="polite"></section>
+
+    <section id="viz-layout">
+      <div id="map-card" class="panel-card">
+        <div id="map" aria-label="Route impact map"></div>
+        <div id="map-empty" class="hidden">No routes match these filters.</div>
+        <div id="legend"></div>
+      </div>
+
+      <aside id="side-panel" class="panel-card">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow">Ranking</span>
+            <h3>Top route impacts</h3>
+          </div>
+          <button type="button" id="clear-selection" class="text-button hidden"><span class="plane-mark">✈</span>Clear</button>
+        </div>
+        <section id="detail-panel" class="selection-mini hidden" aria-live="polite"></section>
+        <div id="route-list"></div>
+      </aside>
+    </section>
+
+    <div id="tooltip" class="hidden"></div>
+  </main>
+
+  <script src="route-map.js"></script>
+</body>
+</html>

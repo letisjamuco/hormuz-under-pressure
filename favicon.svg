@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="From Hormuz to the Boarding Gate">
+  <!-- rounded sky-pale background tile -->
+  <rect width="64" height="64" rx="14" ry="14" fill="#eaf3fb"/>
+
+  <!-- oil drop, lower-left, classic teardrop with point up -->
+  <path d="M22 14
+           C 13 28, 10 36, 10 42
+           C 10 49, 15 54, 22 54
+           C 29 54, 34 49, 34 42
+           C 34 36, 31 28, 22 14 Z"
+        fill="#d65a2e"/>
+
+  <!-- airplane silhouette, navy, classic upward plane rotated to point up-right
+       Same path as the site's nav plane for visual consistency,
+       scaled and rotated to cross over the upper-right of the oil drop -->
+  <g transform="translate(44 28) rotate(45) scale(1.55)">
+    <path d="M21 16v-2l-8-5V3.5
+             c0-.83-.67-1.5-1.5-1.5
+             S10 2.67 10 3.5V9
+             l-8 5v2
+             l8-2.5V19
+             l-2 1.5V22
+             l3.5-1 3.5 1
+             v-1.5L13 19
+             v-5.5l8 2.5z"
+          fill="#16345f" transform="translate(-12 -12)"/>
+  </g>
+</svg>

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From Hormuz to the Boarding Gate</title>
+  <meta name="description" content="Visualizing how oil shocks at the Strait of Hormuz propagate into airline ticket prices." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Bebas+Neue&display=swap"
+    rel="stylesheet"
+  />
+
+
+  <!-- Favicon: SVG-first with simplified 32x32 variant for sharp small sizes,
+       PNG fallbacks for browsers without SVG favicon support, Apple touch icon. -->
+  <link rel="icon" type="image/svg+xml" href="favicon-32.svg" sizes="16x16 32x32" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon-512.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="favicon-512.png" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ---------------------------------------------------------------------
+       NAVIGATION (small plane indicator)
+       --------------------------------------------------------------------- -->
+  <nav class="nav">
+    <a class="nav__brand" href="#hero" data-nav-anchor="hero">
+      <span class="nav__code">M126</span>
+      <span class="nav__sep">·</span>
+      <span class="nav__title">HORMUZ → BOARDING GATE</span>
+    </a>
+    <ul class="nav__menu">
+      <li><a href="#chapter-1">01 Chokepoint</a></li>
+      <li><a href="#chapter-2">02 Oil Shock</a></li>
+      <li><a href="#chapter-3">03 Airlines</a></li>
+      <li><a href="#chapter-4">04 Ticket</a></li>
+      <li><a href="#chapter-5">05 Routes</a></li>
+      <li><a href="#chapter-6">06 Stress</a></li>
+      <li><a href="#video">Video</a></li>
+      <li><a href="#credits">Credits</a></li>
+    </ul>
+    <!-- scroll-progress plane indicator -->
+    <div class="nav__progress" aria-hidden="true">
+      <div class="nav__progress-track"></div>
+      <svg class="nav__plane" viewBox="0 0 24 24" width="20" height="20">
+        <path fill="currentColor" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+      </svg>
+    </div>
+  </nav>
+
+  <!-- ---------------------------------------------------------------------
+       HERO: BOARDING PASS WITH MISSING DEPARTURE/ARRIVAL
+       --------------------------------------------------------------------- -->
+  <header class="hero" id="hero">
+    <div class="hero__noise" aria-hidden="true"></div>
+
+    <!-- ticket card -->
+    <article class="ticket" aria-label="Boarding pass">
+      <!-- left main section -->
+      <div class="ticket__main">
+        <div class="ticket__header">
+          <div class="ticket__airline">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+              <path fill="currentColor" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+            </svg>
+            <span class="ticket__brand">M126 AIRWAYS</span>
+          </div>
+          <div class="ticket__class">BOARDING PASS</div>
+        </div>
+
+        <div class="ticket__route">
+          <div class="ticket__city">
+            <span class="ticket__label">FROM</span>
+            <span class="ticket__code ticket__code--blink">- -   -</span>
+            <span class="ticket__name">Departure pending</span>
+          </div>
+
+          <div class="ticket__arc" aria-hidden="true">
+            <svg viewBox="0 0 240 60" preserveAspectRatio="none">
+              <path d="M 5 50 Q 120 -10 235 50" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <g class="ticket__plane-anim">
+                <path fill="currentColor" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" transform="translate(-12,-12) rotate(105)"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="ticket__city ticket__city--right">
+            <span class="ticket__label">TO</span>
+            <span class="ticket__code ticket__code--blink">- -   -</span>
+            <span class="ticket__name">Arrival pending</span>
+          </div>
+        </div>
+
+        <div class="ticket__details">
+          <div class="ticket__cell">
+            <span class="ticket__label">FLIGHT</span>
+            <span class="ticket__value">M126 · 2026</span>
+          </div>
+          <div class="ticket__cell">
+            <span class="ticket__label">DATE</span>
+            <span class="ticket__value">20 MAY 2026</span>
+          </div>
+          <div class="ticket__cell">
+            <span class="ticket__label">GATE</span>
+            <span class="ticket__value">A26</span>
+          </div>
+          <div class="ticket__cell">
+            <span class="ticket__label">SEAT</span>
+            <span class="ticket__value">14B</span>
+          </div>
+          <div class="ticket__cell ticket__cell--wide">
+            <span class="ticket__label">FARE (USD)</span>
+            <span class="ticket__value ticket__value--lg">$ ▒▒▒.▒▒</span>
+          </div>
+        </div>
+
+        <h1 class="hero__title">
+          <span class="hero__overline">An interactive data visualization</span>
+          From Hormuz<br /><em>to the boarding gate</em>
+        </h1>
+
+        <p class="hero__lede">
+          A geopolitical disruption 4,000&nbsp;km away. An oil price spike measured in days.
+          A ticket price you pay in months. This is the journey of a shockwave,
+          from the Strait of Hormuz to the receipt in your inbox.
+        </p>
+
+        <div class="hero__cta">
+          <a href="#chapter-1" class="btn btn--primary">
+            <span>Begin boarding</span>
+            <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M4 12h14m0 0l-6-6m6 6l-6 6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+          </a>
+          <a href="#video" class="btn btn--ghost">Watch the video</a>
+        </div>
+      </div>
+
+      <!-- perforation -->
+      <div class="ticket__perforation" aria-hidden="true"></div>
+
+      <!-- right stub section -->
+      <aside class="ticket__stub">
+        <div class="ticket__stub-rotate">
+          <span class="ticket__label">PASSENGER</span>
+          <span class="ticket__stub-name">YOU</span>
+          <span class="ticket__label">FROM / TO</span>
+          <span class="ticket__stub-route">- - -&nbsp;→&nbsp;- - -</span>
+          <div class="ticket__barcode" aria-hidden="true"></div>
+          <span class="ticket__seq">SEQ · 026 · 04 · 26</span>
+        </div>
+      </aside>
+    </article>
+
+  </header>
+
+  <!-- ---------------------------------------------------------------------
+       INTRODUCTION: REVEAL THE ROUTE
+       --------------------------------------------------------------------- -->
+  <section class="intro">
+    <div class="container intro__inner">
+      <div class="intro__metadata">
+        <span class="intro__tag">M126 · Data Visualization · NKUA</span>
+        <span class="intro__date">Spring 2026</span>
+      </div>
+      <h2 class="intro__heading">
+        The boarding pass on your screen is missing <span class="accent-red-text">two pieces</span> of information.
+      </h2>
+      <p class="intro__body">
+        You don't know where the flight departs from, and you don't know where it lands. The fare is also blank.
+        That is not an accident. The aviation system rarely tells passengers <em>why</em> a ticket
+        costs what it costs, and almost never points to the upstream events that set the price in motion.
+      </p>
+      <p class="intro__body">
+        This project fills in the missing fields. It traces a single shockwave: a geopolitical disruption around the
+        <strong>Strait of Hormuz</strong>, a narrow body of water between Oman and Iran through which roughly a quarter
+        of the world's seaborne oil passes. When tension builds there, oil prices climb within days. Jet fuel,
+        the largest cost item for most airlines, follows. Surcharges appear. Base fares drift upward. Some routes
+        are quietly rerouted to avoid closed airspace. Eventually, weeks later, the cost arrives at the gate where you board.
+      </p>
+      <div class="intro__stats">
+        <div class="stat">
+          <span class="stat__value">~25%</span>
+          <span class="stat__label">of global seaborne oil trade transits Hormuz</span>
+          <span class="stat__source">EIA, 2024</span>
+        </div>
+        <div class="stat">
+          <span class="stat__value">~20%</span>
+          <span class="stat__label">of global LNG trade transits Hormuz</span>
+          <span class="stat__source">IEA, 2025</span>
+        </div>
+        <div class="stat">
+          <span class="stat__value stat__value--accent">$105/bbl</span>
+          <span class="stat__label">Brent crude during the April 2026 disruption</span>
+          <span class="stat__source">FRED, Apr 2026</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------------
+       CHAPTER TRANSITION: TINY PLANE LEAVES
+       --------------------------------------------------------------------- -->
+  <div class="transition" data-from="intro" data-to="ch1" aria-hidden="true">
+    <div class="transition__arc">
+      <svg viewBox="0 0 1200 80" preserveAspectRatio="none">
+        <path id="t1-path" d="M 0 60 Q 600 -10 1200 60" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 6"/>
+        <g class="transition__plane">
+          <path fill="currentColor" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" transform="translate(-12,-12) rotate(90)"/>
+        </g>
+      </svg>
+    </div>
+    <span class="transition__label">en route to chapter 01</span>
+  </div>
+
+  <!-- ---------------------------------------------------------------------
+       CHAPTER 1: THE CHOKEPOINT (Tableau placeholder, by Eirini)
+       --------------------------------------------------------------------- -->
+  <section class="chapter" id="chapter-1">
+    <div class="container">
+      <header class="chapter__header">
+        <div class="chapter__num">CH·01</div>
+        <h2 class="chapter__title">The chokepoint</h2>
+        <p class="chapter__kicker">A narrow strait. A quarter of the world's oil. No real backup route.</p>
+      </header>
+
+      <div class="chapter__layout chapter__layout--tableau-full">
+        <aside class="chapter__notes">
+          <p>
+            The Strait of Hormuz is just <strong>33&nbsp;km</strong> wide at its narrowest point. Tankers pass single-file
+            through shipping lanes flanked by Iranian territorial waters on one side and Omani waters on the other.
+          </p>
+          <p>
+            Saudi Arabia, Iraq, Kuwait, the UAE, and Qatar export almost all of their oil through it. Only Saudi Arabia
+            and the UAE operate pipelines that can partially bypass the strait, with limited capacity.
+          </p>
+          <ul class="chapter__bullets">
+            <li>Tehran has threatened closure repeatedly. Closure has never been completed.</li>
+            <li>In April 2026, the strait operates under heavy restrictions.</li>
+            <li>Most oil leaving Hormuz heads to Asia (China, India, Japan, South Korea).</li>
+          </ul>
+          <p class="chapter__source">Data source: EIA · IEA</p>
+        </aside>
+
+        <div class="tableau-embed-wrap" data-owner="Eirini" data-chapter="1">
+          <div class="tableau-viz-scaler">
+            <tableau-viz
+              id="viz-ch1"
+              src="https://public.tableau.com/views/M126-FromHormuztotheBoardingGateIrini/TheChokepoint"
+              toolbar="bottom"
+              hide-tabs
+              device="desktop"
+              touch-optimize="true">
+            </tableau-viz>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="transition" aria-hidden="true">
+    <div class="transition__arc">
+      <svg viewBox="0 0 1200 80" preserveAspectRatio="none">
+        <path d="M 0 60 Q 600 -10 1200 60" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 6"/>
+        <g class="transition__plane">
+          <path fill="currentColor" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" transform="translate(-12,-12) rotate(90)"/>
+        </g>
+      </svg>
+    </div>
+    <span class="transition__label">en route to chapter 02</span>
+  </div>
+
+  <!-- ---------------------------------------------------------------------
+       CHAPTER 2: THE OIL SHOCK (Tableau placeholder, by Eirini)
+       --------------------------------------------------------------------- -->
+  <section class="chapter chapter--alt" id="chapter-2">
+    <div class="container">
+      <header class="chapter__header">
+        <div class="chapter__num">CH·02</div>
+        <h2 class="chapter__title">The oil shock</h2>
+        <p class="chapter__kicker">Brent crude responds in days. Jet fuel follows within weeks.</p>
+      </header>
+
+      <div class="chapter__layout chapter__layout--tableau-full">
+        <aside class="chapter__notes">
+          <p>
+            When markets price in a Hormuz disruption, Brent crude moves first. Jet fuel,
+            refined from crude, lags by a few weeks but tracks closely. The chart on the right
+            overlays the Kaggle scenario series (2019 to 2026) with FRED's real Brent series for
+            comparison.
+          </p>
+          <p>
+            Dotted vertical lines mark conflict events from our event table. Months when the
+            strait was disrupted are shaded.
+          </p>
+          <p class="chapter__source">Data source: Kaggle · FRED · EIA</p>
+        </aside>
+
+        <div class="tableau-embed-wrap" data-owner="Eirini" data-chapter="2">
+          <div class="tableau-viz-scaler">
+            <tableau-viz
+              id="viz-ch2"
+              src="https://public.tableau.com/views/M126-FromHormuztotheBoardingGateIrini2/TheOilShock"
+              toolbar="bottom"
+              hide-tabs
+              device="desktop"
+              touch-optimize="true">
+            </tableau-viz>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="transition" aria-hidden="true">
+    <div class="transition__arc">
+      <svg viewBox="0 0 1200 80" preserveAspectRatio="none">
+        <path d="M 0 60 Q 600 -10 1200 60" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 6"/>
+        <g class="transition__plane">
+          <path fill="currentColor" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" transform="translate(-12,-12) rotate(90)"/>
+        </g>
+      </svg>
+    </div>
+    <span class="transition__label">en route to chapter 03</span>
+  </div>
+
+  <!-- ---------------------------------------------------------------------
+       CHAPTER 3: THE AIRLINE RESPONSE (Tableau placeholder, by Alexandra)
+       --------------------------------------------------------------------- -->
+  <section class="chapter" id="chapter-3">
+    <div class="container">
+      <header class="chapter__header">
+        <div class="chapter__num">CH·03</div>
+        <h2 class="chapter__title">The airline response</h2>
+        <p class="chapter__kicker">Some airlines pass the cost to you. Others absorb it. Most do both, partially.</p>
+      </header>
+
+      <div class="chapter__layout">
+        <aside class="chapter__notes">
+          <p>
+            Once jet fuel costs rise, airlines have a choice: pass the cost to passengers,
+            absorb it through margin, or hedge with fuel contracts signed in advance.
+            Most carriers do all three, in different proportions, depending on
+            their business model and the route.
+          </p>
+          <p>
+            Filter by region or route class to see which carriers move first, which move most,
+            and which barely move at all.
+          </p>
+          <p class="chapter__source">Data source: Kaggle Airline Ticket Prices vs Oil &amp; Fuel Costs</p>
+        </aside>
+
+        <div class="placeholder placeholder--chart" data-owner="Alexandra" data-chapter="3">
+          <div class="placeholder__inner">
+            <div class="placeholder__icon">AIR</div>
+            <div class="placeholder__title">Tableau Embed</div>
+            <div class="placeholder__desc">
+              CH·03, Airline comparison (slope chart or small multiples)<br />
+              filterable by region, route class
+            </div>
+            <div class="placeholder__owner">Owner: Alexandra K. · Tableau Public</div>
+            <div class="placeholder__embed-hint">
+              Replace with Tableau iframe embed
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="transition" aria-hidden="true">
+    <div class="transition__arc">
+      <svg viewBox="0 0 1200 80" preserveAspectRatio="none">
+        <path d="M 0 60 Q 600 -10 1200 60" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 6"/>
+        <g class="transition__plane">
+          <path fill="currentColor" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" transform="translate(-12,-12) rotate(90)"/>
+        </g>
+      </svg>
+    </div>
+    <span class="transition__label">en route to chapter 04</span>
+  </div>
+
+  <!-- ---------------------------------------------------------------------
+       CHAPTER 4: THE PASSENGER TICKET (Tableau placeholder, by Alexandra)
+       --------------------------------------------------------------------- -->
+  <section class="chapter chapter--alt" id="chapter-4">
+    <div class="container">
+      <header class="chapter__header">
+        <div class="chapter__num">CH·04</div>
+        <h2 class="chapter__title">The passenger ticket</h2>
+        <p class="chapter__kicker">What you actually pay, broken into the parts you don't normally see.</p>
+      </header>
+
+      <div class="chapter__layout chapter__layout--reverse">
+        <aside class="chapter__notes">
+          <p>
+            A ticket is not one number. It is a stack of three: the base fare,
+            the fuel surcharge, and the taxes and fees. The surcharge is the part
+            that moves with oil. The base fare moves more slowly. The taxes
+            move only with policy.
+          </p>
+          <p>
+            Compare a ticket from a baseline month against the same route during
+            a disruption period. The shape of the stack tells the story.
+          </p>
+          <p class="chapter__source">Data source: Kaggle Airline Ticket Prices vs Oil &amp; Fuel Costs</p>
+        </aside>
+
+        <div class="placeholder placeholder--ticket" data-owner="Alexandra" data-chapter="4">
+          <div class="placeholder__inner">
+            <div class="placeholder__icon">TKT</div>
+            <div class="placeholder__title">Tableau Embed</div>
+            <div class="placeholder__desc">
+              CH·04, Boarding-pass breakdown<br />
+              base fare · surcharge · taxes (before / during / after shock)
+            </div>
+            <div class="placeholder__owner">Owner: Alexandra K. · Tableau Public</div>
+            <div class="placeholder__embed-hint">
+              Replace with Tableau iframe embed
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="transition" aria-hidden="true">
+    <div class="transition__arc">
+      <svg viewBox="0 0 1200 80" preserveAspectRatio="none">
+        <path d="M 0 60 Q 600 -10 1200 60" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 6"/>
+        <g class="transition__plane">
+          <path fill="currentColor" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" transform="translate(-12,-12) rotate(90)"/>
+        </g>
+      </svg>
+    </div>
+    <span class="transition__label">en route to chapter 05</span>
+  </div>
+
+  <!-- ---------------------------------------------------------------------
+       CHAPTER 5: THE ROUTE MAP (D3 placeholder, by Letisja)
+       --------------------------------------------------------------------- -->
+  <section class="chapter chapter--feature" id="chapter-5">
+    <div class="container">
+      <header class="chapter__header">
+        <div class="chapter__num">CH·05</div>
+        <h2 class="chapter__title">The route map</h2>
+        <p class="chapter__kicker">Which routes carry the largest estimated extra fuel cost?</p>
+      </header>
+
+      <div class="chapter__layout chapter__layout--full">
+        <aside class="chapter__notes chapter__notes--inline chapter__notes--compact">
+          <p>After the fuel shock, this map shows which modelled routes carry the highest estimated extra fuel cost, with filters for period, airline, hub and status.</p>
+        </aside>
+
+        <div class="d3-embed-wrap" id="d3-route-map">
+          <iframe
+            src="d3/route-map.html"
+            title="CH·05 interactive route impact map"
+            loading="lazy"
+            class="d3-embed-frame">
+          </iframe>
+        </div>
+        <p class="chapter__source chapter__source--below-embed">Data source: Kaggle route table · FRED Brent/Jet Fuel · OurAirports · OpenStreetMap</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="transition" aria-hidden="true">
+    <div class="transition__arc">
+      <svg viewBox="0 0 1200 80" preserveAspectRatio="none">
+        <path d="M 0 60 Q 600 -10 1200 60" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 6"/>
+        <g class="transition__plane">
+          <path fill="currentColor" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" transform="translate(-12,-12) rotate(90)"/>
+        </g>
+      </svg>
+    </div>
+    <span class="transition__label">en route to chapter 06</span>
+  </div>
+
+  <!-- ---------------------------------------------------------------------
+       CHAPTER 6: THE STRESS DASHBOARD (Tableau placeholder, all)
+       --------------------------------------------------------------------- -->
+  <section class="chapter" id="chapter-6">
+    <div class="container">
+      <header class="chapter__header">
+        <div class="chapter__num">CH·06</div>
+        <h2 class="chapter__title">The stress dashboard</h2>
+        <p class="chapter__kicker">All six chapters, one filter set. Trace the shockwave end to end.</p>
+      </header>
+
+      <div class="chapter__layout chapter__layout--full">
+        <div class="placeholder placeholder--dashboard" data-owner="All" data-chapter="6">
+          <div class="placeholder__inner">
+            <div class="placeholder__icon">BRD</div>
+            <div class="placeholder__title">Tableau Embed</div>
+            <div class="placeholder__desc">
+              CH·06, Summary view with KPI cards + global filters<br />
+              airline · region · route class · conflict phase
+            </div>
+            <div class="placeholder__owner">Owner: All three · Tableau Public</div>
+            <div class="placeholder__embed-hint">
+              Replace with final integrated Tableau dashboard
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------------
+       VIDEO
+       --------------------------------------------------------------------- -->
+  <section class="video" id="video">
+    <div class="container">
+      <header class="chapter__header">
+        <div class="chapter__num">FILM</div>
+        <h2 class="chapter__title">A 2.5 minute walkthrough</h2>
+        <p class="chapter__kicker">Watch the dashboard tell its own story.</p>
+      </header>
+
+      <div class="video__frame">
+        <div class="placeholder placeholder--video" data-owner="All">
+          <div class="placeholder__inner">
+            <div class="placeholder__icon">FILM</div>
+            <div class="placeholder__title">YouTube Embed</div>
+            <div class="placeholder__desc">
+              Replace with the final 2.5-minute screencast<br />
+              <code>&lt;iframe src="https://www.youtube.com/embed/XXX" ...&gt;&lt;/iframe&gt;</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------------
+       CREDITS
+       --------------------------------------------------------------------- -->
+  <footer class="credits" id="credits">
+    <div class="container">
+      <div class="credits__top">
+        <h2 class="credits__title">Credits &amp; acknowledgments</h2>
+        <span class="credits__seal">M126 · NKUA · 2026</span>
+      </div>
+
+      <div class="credits__grid">
+        <article class="credits__card">
+          <span class="credits__role">CH·05 · web development · video editing</span>
+          <h3 class="credits__name">Letisja Muco
+            <a class="credits__linkedin-icon" href="https://www.linkedin.com/in/letisjamuco/" target="_blank" rel="noopener" aria-label="Letisja Muco LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.35 8.2h4.3V24H.35V8.2zM8.02 8.2h4.12v2.16h.06c.57-1.08 1.98-2.22 4.08-2.22 4.36 0 5.17 2.87 5.17 6.6V24h-4.3v-8.2c0-1.96-.04-4.48-2.73-4.48-2.73 0-3.15 2.13-3.15 4.34V24H8.02V8.2z"/></svg></a>
+          </h3>
+          <span class="credits__email">lmuco@di.uoa.gr</span>
+        </article>
+        <article class="credits__card">
+          <span class="credits__role">Oil &amp; fuel chapters (CH·01, CH·02)</span>
+          <h3 class="credits__name">Eirini Katrantzi
+            <a class="credits__linkedin-icon" href="https://www.linkedin.com/in/irini-katrantzi-661b33221/" target="_blank" rel="noopener" aria-label="Eirini Katrantzi LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.35 8.2h4.3V24H.35V8.2zM8.02 8.2h4.12v2.16h.06c.57-1.08 1.98-2.22 4.08-2.22 4.36 0 5.17 2.87 5.17 6.6V24h-4.3v-8.2c0-1.96-.04-4.48-2.73-4.48-2.73 0-3.15 2.13-3.15 4.34V24H8.02V8.2z"/></svg></a>
+          </h3>
+          <span class="credits__email">katreir@di.uoa.gr</span>
+        </article>
+        <article class="credits__card">
+          <span class="credits__role">Airline &amp; passenger chapters (CH·03, CH·04)</span>
+          <h3 class="credits__name">Alexandra Kaliakouda
+            <a class="credits__linkedin-icon" href="https://www.linkedin.com/in/alexandra-kaliakouda-5b5b09162" target="_blank" rel="noopener" aria-label="Alexandra Kaliakouda LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.35 8.2h4.3V24H.35V8.2zM8.02 8.2h4.12v2.16h.06c.57-1.08 1.98-2.22 4.08-2.22 4.36 0 5.17 2.87 5.17 6.6V24h-4.3v-8.2c0-1.96-.04-4.48-2.73-4.48-2.73 0-3.15 2.13-3.15 4.34V24H8.02V8.2z"/></svg></a>
+          </h3>
+          <span class="credits__email">kaliak@di.uoa.gr</span>
+        </article>
+      </div>
+
+      <div class="credits__sources">
+        <h4 class="credits__sources-title">Data sources</h4>
+        <ul>
+          <li><a href="https://fred.stlouisfed.org/series/DCOILBRENTEU" target="_blank" rel="noopener">FRED Brent Crude (DCOILBRENTEU)</a></li>
+          <li><a href="https://fred.stlouisfed.org/series/DJFUELUSGULF" target="_blank" rel="noopener">FRED Jet Fuel (DJFUELUSGULF)</a></li>
+          <li><a href="https://davidmegginson.github.io/ourairports-data/airports.csv" target="_blank" rel="noopener">OurAirports airports.csv</a></li>
+          <li><a href="https://data.worldbank.org/indicator/IS.AIR.PSGR" target="_blank" rel="noopener">World Bank Air Passengers</a></li>
+          <li><a href="https://www.kaggle.com/datasets/zkskhurram/airline-ticket-prices-vs-oil-and-fuel-costs" target="_blank" rel="noopener">Kaggle Airline Ticket Prices vs Oil &amp; Fuel Costs</a></li>
+        </ul>
+      </div>
+
+      <div class="credits__bottom">
+        <p>Submitted for course M126 Data Visualization, instructor Maria Roussou. Department of Informatics &amp; Telecommunications, National and Kapodistrian University of Athens.</p>
+        <p class="credits__disclaimer">
+          The primary Kaggle dataset is scenario-based and calibrated to real-world benchmarks. It is not a record
+          of historical events. We use it to illustrate <em>propagation patterns</em>, not to make causal claims.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Tableau Embedding API v3 (web component <tableau-viz>) -->
+  <script type="module" src="https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
+
+  <script src="script.js"></script>
+</body>
+</html>

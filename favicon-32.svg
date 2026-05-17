@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="From Hormuz to the Boarding Gate">
+  <!-- rounded background -->
+  <rect width="32" height="32" rx="7" ry="7" fill="#eaf3fb"/>
+
+  <!-- compact oil drop, lower-left -->
+  <path d="M11 8
+           C 6 16, 5 19, 5 22
+           C 5 25.5, 7.5 28, 11 28
+           C 14.5 28, 17 25.5, 17 22
+           C 17 19, 16 16, 11 8 Z"
+        fill="#d65a2e"/>
+
+  <!-- paper-plane / takeoff silhouette pointing up-right, clearly readable at 16px -->
+  <!-- Solid triangular body + crease line for "fold" -->
+  <g fill="#16345f">
+    <!-- main triangle: nose at top-right, tail-bottom at the drop tip -->
+    <path d="M28 4 L13 19 L21 18 L24 11 Z"/>
+    <!-- bottom flap (the second wing of a paper plane) -->
+    <path d="M28 4 L21 18 L24 16 L25 11 Z" fill="#0a1628"/>
+  </g>
+</svg>
