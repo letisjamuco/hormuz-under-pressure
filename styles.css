@@ -1896,3 +1896,24 @@ body {
   color: var(--ink-soft);
   font-style: italic;
 }
+
+/* ---------------------------------------------------------------------
+   CH04 Tableau embed: boarding pass breakdown
+   --------------------------------------------------------------------- */
+.chapter__layout--tableau-ticket {
+  grid-template-columns: 1fr !important;
+  gap: 1.1rem !important;
+}
+
+#chapter-4 .tableau-viz-scaler--ch4 {
+  --t-base-w: 1200px;
+  --t-base-h: 780px;
+}
+
+#chapter-4 {
+  min-height: auto !important;
+}
+
+#chapter-4 .tableau-embed-wrap {
+  max-width: 1180px;
+}

@@ -392,26 +392,6 @@
               </div>
             </div>
           </article>
-          </article>
-
-          <article class="tableau-panel">
-            <div class="tableau-panel__header">
-              <span class="tableau-panel__eyebrow">View 2</span>
-              <h3>CH·03B · Before vs during the shock</h3>
-            </div>
-            <div class="tableau-embed-wrap" data-owner="Alexandra" data-chapter="3b">
-              <div class="tableau-viz-scaler tableau-viz-scaler--ch3b">
-                <tableau-viz
-                  id="viz-ch3-slope"
-                  src="https://public.tableau.com/views/CH3_airline_response/CH3-slopebefore-during"
-                  toolbar="bottom"
-                  hide-tabs
-                  device="desktop"
-                  touch-optimize="true">
-                </tableau-viz>
-              </div>
-            </div>
-          </article>
         </div>
       </div>
     </div>
@@ -440,33 +420,30 @@
         <p class="chapter__kicker">What you actually pay, broken into the parts you don't normally see.</p>
       </header>
 
-      <div class="chapter__layout chapter__layout--reverse">
+      <div class="chapter__layout chapter__layout--tableau-full chapter__layout--tableau-ticket">
         <aside class="chapter__notes">
           <p>
             A ticket is not one number. It is a stack of three: the base fare,
             the fuel surcharge, and the taxes and fees. The surcharge is the part
-            that moves with oil. The base fare moves more slowly. The taxes
-            move only with policy.
+            that moves with oil.
           </p>
           <p>
-            Compare a ticket from a baseline month against the same route during
-            a disruption period. The shape of the stack tells the story.
+            This view compares the ticket breakdown before and during the shock,
+            so the passenger-facing cost change is easier to read.
           </p>
           <p class="chapter__source">Data source: Kaggle Airline Ticket Prices vs Oil &amp; Fuel Costs</p>
         </aside>
 
-        <div class="placeholder placeholder--ticket" data-owner="Alexandra" data-chapter="4">
-          <div class="placeholder__inner">
-            <div class="placeholder__icon">TKT</div>
-            <div class="placeholder__title">Tableau Embed</div>
-            <div class="placeholder__desc">
-              CH·04, Boarding-pass breakdown<br />
-              base fare · surcharge · taxes (before / during / after shock)
-            </div>
-            <div class="placeholder__owner">Owner: Alexandra K. · Tableau Public</div>
-            <div class="placeholder__embed-hint">
-              Replace with Tableau iframe embed
-            </div>
+        <div class="tableau-embed-wrap" data-owner="Alexandra" data-chapter="4">
+          <div class="tableau-viz-scaler tableau-viz-scaler--ch4">
+            <tableau-viz
+              id="viz-ch4-boardingpass"
+              src="https://public.tableau.com/views/CH3_airline_response/CH4-boardingpassbreakdown"
+              toolbar="bottom"
+              hide-tabs
+              device="desktop"
+              touch-optimize="true">
+            </tableau-viz>
           </div>
         </div>
       </div>
