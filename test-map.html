@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map Test</title>
+<!-- Try cdnjs instead of unpkg -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<style>
+  body { margin: 20px; font-family: sans-serif; }
+  h2 { margin-bottom: 10px; }
+  .test-box { display: flex; gap: 20px; flex-wrap: wrap; }
+  .test { flex: 1; min-width: 400px; }
+  .test h3 { font-size: 14px; margin: 5px 0; }
+  #map1 { width: 100%; height: 400px; border: 2px solid blue; }
+  #map2 { width: 100%; height: 400px; border: 2px solid green; }
+</style>
+</head>
+<body>
+<h2>Leaflet debug — cdnjs version</h2>
+<p id="info"></p>
+<div class="test-box">
+  <div class="test">
+    <h3>Map 1: Standard init</h3>
+    <div id="map1"></div>
+  </div>
+  <div class="test">
+    <h3>Map 2: Init after 1 second delay</h3>
+    <div id="map2"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+  document.getElementById('info').textContent = 
+    'Leaflet ' + L.version + 
+    ' | devicePixelRatio: ' + window.devicePixelRatio + 
+    ' | innerWidth: ' + window.innerWidth +
+    ' | screen: ' + screen.width + 'x' + screen.height;
+
+  // Map 1: immediate
+  var map1 = L.map('map1').setView([26.35, 56.65], 7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 11, attribution: '&copy; OSM'
+  }).addTo(map1);
+  L.marker([26.35, 56.65]).addTo(map1);
+
+  // Map 2: delayed
+  setTimeout(function() {
+    var map2 = L.map('map2').setView([26.35, 56.65], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 11, attribution: '&copy; OSM'
+    }).addTo(map2);
+    L.marker([26.35, 56.65]).addTo(map2);
+  }, 1000);
+</script>
+</body>
+</html>

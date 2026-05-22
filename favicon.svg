@@ -1,28 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="From Hormuz to the Boarding Gate">
-  <!-- rounded sky-pale background tile -->
-  <rect width="64" height="64" rx="14" ry="14" fill="#eaf3fb"/>
-
-  <!-- oil drop, lower-left, classic teardrop with point up -->
-  <path d="M22 14
-           C 13 28, 10 36, 10 42
-           C 10 49, 15 54, 22 54
-           C 29 54, 34 49, 34 42
-           C 34 36, 31 28, 22 14 Z"
-        fill="#d65a2e"/>
-
-  <!-- airplane silhouette, navy, classic upward plane rotated to point up-right
-       Same path as the site's nav plane for visual consistency,
-       scaled and rotated to cross over the upper-right of the oil drop -->
-  <g transform="translate(44 28) rotate(45) scale(1.55)">
-    <path d="M21 16v-2l-8-5V3.5
-             c0-.83-.67-1.5-1.5-1.5
-             S10 2.67 10 3.5V9
-             l-8 5v2
-             l8-2.5V19
-             l-2 1.5V22
-             l3.5-1 3.5 1
-             v-1.5L13 19
-             v-5.5l8 2.5z"
-          fill="#16345f" transform="translate(-12 -12)"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#dff3ec"/>
+      <stop offset="1" stop-color="#74b8a7"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#g)"/>
+  <!-- Side-view tanker ship -->
+  <path d="M8 38 L14 38 L14 28 L18 24 L48 24 L52 28 L52 38 L56 38 L52 46 L12 46 L8 38Z" fill="#0f4d46"/>
+  <rect x="16" y="26" width="8" height="8" rx="1.5" fill="#dff3ec" opacity=".85"/>
+  <rect x="26" y="26" width="8" height="8" rx="1.5" fill="#dff3ec" opacity=".85"/>
+  <rect x="36" y="26" width="8" height="8" rx="1.5" fill="#dff3ec" opacity=".85"/>
+  <rect x="30" y="18" width="4" height="7" rx="1" fill="#1e5a51"/>
+  <path d="M8 51c5 3 10 3 15 0 5 3 10 3 15 0 5 3 10 3 15 0" fill="none" stroke="#0f4d46" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+  <!-- Oil droplet accent -->
+  <circle cx="52" cy="16" r="6" fill="#d36a38" opacity=".85"/>
 </svg>

@@ -1,0 +1,535 @@
+portid,portname,month,export_tanker,portcalls_tanker,days
+port20,Al Basrah (Iraq),2019-01,0,4,31
+port20,Al Basrah (Iraq),2019-02,0,0,28
+port20,Al Basrah (Iraq),2019-03,0,0,31
+port20,Al Basrah (Iraq),2019-04,0,0,30
+port20,Al Basrah (Iraq),2019-05,0,0,31
+port20,Al Basrah (Iraq),2019-06,0,0,30
+port20,Al Basrah (Iraq),2019-07,0,0,31
+port20,Al Basrah (Iraq),2019-08,0,0,31
+port20,Al Basrah (Iraq),2019-09,0,0,30
+port20,Al Basrah (Iraq),2019-10,0,0,31
+port20,Al Basrah (Iraq),2019-11,0,0,30
+port20,Al Basrah (Iraq),2019-12,0,0,31
+port20,Al Basrah (Iraq),2020-01,0,0,31
+port20,Al Basrah (Iraq),2020-02,0,0,29
+port20,Al Basrah (Iraq),2020-03,0,0,31
+port20,Al Basrah (Iraq),2020-04,0,0,30
+port20,Al Basrah (Iraq),2020-05,0,0,31
+port20,Al Basrah (Iraq),2020-06,0,0,30
+port20,Al Basrah (Iraq),2020-07,0,0,31
+port20,Al Basrah (Iraq),2020-08,0,0,31
+port20,Al Basrah (Iraq),2020-09,0,0,30
+port20,Al Basrah (Iraq),2020-10,0,0,31
+port20,Al Basrah (Iraq),2020-11,0,0,30
+port20,Al Basrah (Iraq),2020-12,0,0,31
+port20,Al Basrah (Iraq),2021-01,0,0,31
+port20,Al Basrah (Iraq),2021-02,0,0,28
+port20,Al Basrah (Iraq),2021-03,0,0,31
+port20,Al Basrah (Iraq),2021-04,0,0,30
+port20,Al Basrah (Iraq),2021-05,0,0,31
+port20,Al Basrah (Iraq),2021-06,0,0,30
+port20,Al Basrah (Iraq),2021-07,0,0,31
+port20,Al Basrah (Iraq),2021-08,0,0,31
+port20,Al Basrah (Iraq),2021-09,0,0,30
+port20,Al Basrah (Iraq),2021-10,0,0,31
+port20,Al Basrah (Iraq),2021-11,0,0,30
+port20,Al Basrah (Iraq),2021-12,0,0,31
+port20,Al Basrah (Iraq),2022-01,0,0,31
+port20,Al Basrah (Iraq),2022-02,0,0,28
+port20,Al Basrah (Iraq),2022-03,0,0,31
+port20,Al Basrah (Iraq),2022-04,0,0,30
+port20,Al Basrah (Iraq),2022-05,0,0,31
+port20,Al Basrah (Iraq),2022-06,0,0,30
+port20,Al Basrah (Iraq),2022-07,0,0,31
+port20,Al Basrah (Iraq),2022-08,0,0,31
+port20,Al Basrah (Iraq),2022-09,0,0,30
+port20,Al Basrah (Iraq),2022-10,0,0,31
+port20,Al Basrah (Iraq),2022-11,0,0,30
+port20,Al Basrah (Iraq),2022-12,0,0,31
+port20,Al Basrah (Iraq),2023-01,0,0,31
+port20,Al Basrah (Iraq),2023-02,0,0,28
+port20,Al Basrah (Iraq),2023-03,0,0,31
+port20,Al Basrah (Iraq),2023-04,0,0,30
+port20,Al Basrah (Iraq),2023-05,0,0,31
+port20,Al Basrah (Iraq),2023-06,0,0,30
+port20,Al Basrah (Iraq),2023-07,0,0,31
+port20,Al Basrah (Iraq),2023-08,0,0,31
+port20,Al Basrah (Iraq),2023-09,0,0,30
+port20,Al Basrah (Iraq),2023-10,0,0,31
+port20,Al Basrah (Iraq),2023-11,0,0,30
+port20,Al Basrah (Iraq),2023-12,0,0,31
+port20,Al Basrah (Iraq),2024-01,0,0,31
+port20,Al Basrah (Iraq),2024-02,0,0,29
+port20,Al Basrah (Iraq),2024-03,0,0,31
+port20,Al Basrah (Iraq),2024-04,0,0,30
+port20,Al Basrah (Iraq),2024-05,0,0,31
+port20,Al Basrah (Iraq),2024-06,0,0,30
+port20,Al Basrah (Iraq),2024-07,0,0,31
+port20,Al Basrah (Iraq),2024-08,0,0,31
+port20,Al Basrah (Iraq),2024-09,0,0,30
+port20,Al Basrah (Iraq),2024-10,0,0,31
+port20,Al Basrah (Iraq),2024-11,0,0,30
+port20,Al Basrah (Iraq),2024-12,0,0,31
+port20,Al Basrah (Iraq),2025-01,0,0,31
+port20,Al Basrah (Iraq),2025-02,0,0,28
+port20,Al Basrah (Iraq),2025-03,0,0,31
+port20,Al Basrah (Iraq),2025-04,0,0,30
+port20,Al Basrah (Iraq),2025-05,0,1,31
+port20,Al Basrah (Iraq),2025-06,0,0,30
+port20,Al Basrah (Iraq),2025-07,0,0,31
+port20,Al Basrah (Iraq),2025-08,0,0,31
+port20,Al Basrah (Iraq),2025-09,0,0,30
+port20,Al Basrah (Iraq),2025-10,0,0,31
+port20,Al Basrah (Iraq),2025-11,0,0,30
+port20,Al Basrah (Iraq),2025-12,0,0,31
+port20,Al Basrah (Iraq),2026-01,0,0,31
+port20,Al Basrah (Iraq),2026-02,0,0,28
+port20,Al Basrah (Iraq),2026-03,0,0,31
+port20,Al Basrah (Iraq),2026-04,0,0,30
+port20,Al Basrah (Iraq),2026-05,0,0,15
+port24,Jubail (Saudi Arabia),2019-01,1734526,71,31
+port24,Jubail (Saudi Arabia),2019-02,1809166,65,28
+port24,Jubail (Saudi Arabia),2019-03,1729387,59,31
+port24,Jubail (Saudi Arabia),2019-04,2642158,117,30
+port24,Jubail (Saudi Arabia),2019-05,2477951,134,31
+port24,Jubail (Saudi Arabia),2019-06,3437587,149,30
+port24,Jubail (Saudi Arabia),2019-07,3146047,146,31
+port24,Jubail (Saudi Arabia),2019-08,3163512,147,31
+port24,Jubail (Saudi Arabia),2019-09,2946739,126,30
+port24,Jubail (Saudi Arabia),2019-10,2565238,124,31
+port24,Jubail (Saudi Arabia),2019-11,1742392,85,30
+port24,Jubail (Saudi Arabia),2019-12,2709793,109,31
+port24,Jubail (Saudi Arabia),2020-01,2169500,115,31
+port24,Jubail (Saudi Arabia),2020-02,1840910,90,29
+port24,Jubail (Saudi Arabia),2020-03,2252258,94,31
+port24,Jubail (Saudi Arabia),2020-04,2893157,131,30
+port24,Jubail (Saudi Arabia),2020-05,3999361,144,31
+port24,Jubail (Saudi Arabia),2020-06,3157343,140,30
+port24,Jubail (Saudi Arabia),2020-07,3656956,169,31
+port24,Jubail (Saudi Arabia),2020-08,2991213,131,31
+port24,Jubail (Saudi Arabia),2020-09,3493082,138,30
+port24,Jubail (Saudi Arabia),2020-10,3169994,141,31
+port24,Jubail (Saudi Arabia),2020-11,2424931,91,30
+port24,Jubail (Saudi Arabia),2020-12,1339907,56,31
+port24,Jubail (Saudi Arabia),2021-01,1493839,73,31
+port24,Jubail (Saudi Arabia),2021-02,1523350,83,28
+port24,Jubail (Saudi Arabia),2021-03,2528960,130,31
+port24,Jubail (Saudi Arabia),2021-04,3462663,139,30
+port24,Jubail (Saudi Arabia),2021-05,3505526,135,31
+port24,Jubail (Saudi Arabia),2021-06,3177071,145,30
+port24,Jubail (Saudi Arabia),2021-07,3565885,137,31
+port24,Jubail (Saudi Arabia),2021-08,3362647,135,31
+port24,Jubail (Saudi Arabia),2021-09,3544466,149,30
+port24,Jubail (Saudi Arabia),2021-10,3521386,158,31
+port24,Jubail (Saudi Arabia),2021-11,3614064,135,30
+port24,Jubail (Saudi Arabia),2021-12,3970201,149,31
+port24,Jubail (Saudi Arabia),2022-01,3731000,148,31
+port24,Jubail (Saudi Arabia),2022-02,3594157,144,28
+port24,Jubail (Saudi Arabia),2022-03,3542541,130,31
+port24,Jubail (Saudi Arabia),2022-04,3803787,144,30
+port24,Jubail (Saudi Arabia),2022-05,3609793,136,31
+port24,Jubail (Saudi Arabia),2022-06,3511134,136,30
+port24,Jubail (Saudi Arabia),2022-07,3407093,136,31
+port24,Jubail (Saudi Arabia),2022-08,3917347,147,31
+port24,Jubail (Saudi Arabia),2022-09,3649098,143,30
+port24,Jubail (Saudi Arabia),2022-10,3380569,144,31
+port24,Jubail (Saudi Arabia),2022-11,2412813,94,30
+port24,Jubail (Saudi Arabia),2022-12,1787099,70,31
+port24,Jubail (Saudi Arabia),2023-01,1619698,61,31
+port24,Jubail (Saudi Arabia),2023-02,2560713,101,28
+port24,Jubail (Saudi Arabia),2023-03,3461311,129,31
+port24,Jubail (Saudi Arabia),2023-04,3054172,120,30
+port24,Jubail (Saudi Arabia),2023-05,3384159,132,31
+port24,Jubail (Saudi Arabia),2023-06,1973819,87,30
+port24,Jubail (Saudi Arabia),2023-07,2549142,97,31
+port24,Jubail (Saudi Arabia),2023-08,3617500,158,31
+port24,Jubail (Saudi Arabia),2023-09,3442855,147,30
+port24,Jubail (Saudi Arabia),2023-10,2509183,135,31
+port24,Jubail (Saudi Arabia),2023-11,1404217,62,30
+port24,Jubail (Saudi Arabia),2023-12,2192977,83,31
+port24,Jubail (Saudi Arabia),2024-01,1883669,67,31
+port24,Jubail (Saudi Arabia),2024-02,1433912,49,29
+port24,Jubail (Saudi Arabia),2024-03,3499408,144,31
+port24,Jubail (Saudi Arabia),2024-04,3364430,125,30
+port24,Jubail (Saudi Arabia),2024-05,3185808,123,31
+port24,Jubail (Saudi Arabia),2024-06,3186551,129,30
+port24,Jubail (Saudi Arabia),2024-07,3201036,131,31
+port24,Jubail (Saudi Arabia),2024-08,2488562,106,31
+port24,Jubail (Saudi Arabia),2024-09,3414142,127,30
+port24,Jubail (Saudi Arabia),2024-10,3321993,126,31
+port24,Jubail (Saudi Arabia),2024-11,3034323,116,30
+port24,Jubail (Saudi Arabia),2024-12,3072266,114,31
+port24,Jubail (Saudi Arabia),2025-01,2455239,100,31
+port24,Jubail (Saudi Arabia),2025-02,2480027,83,28
+port24,Jubail (Saudi Arabia),2025-03,3226718,141,31
+port24,Jubail (Saudi Arabia),2025-04,3885686,142,30
+port24,Jubail (Saudi Arabia),2025-05,2608865,95,31
+port24,Jubail (Saudi Arabia),2025-06,2259763,83,30
+port24,Jubail (Saudi Arabia),2025-07,2919181,107,31
+port24,Jubail (Saudi Arabia),2025-08,3927832,157,31
+port24,Jubail (Saudi Arabia),2025-09,3579538,129,30
+port24,Jubail (Saudi Arabia),2025-10,3348878,130,31
+port24,Jubail (Saudi Arabia),2025-11,1953917,105,30
+port24,Jubail (Saudi Arabia),2025-12,1604910,69,31
+port24,Jubail (Saudi Arabia),2026-01,2172196,91,31
+port24,Jubail (Saudi Arabia),2026-02,2694457,112,28
+port24,Jubail (Saudi Arabia),2026-03,1270782,50,31
+port24,Jubail (Saudi Arabia),2026-04,907105,30,30
+port24,Jubail (Saudi Arabia),2026-05,351909,9,15
+port275,Dammam (Saudi Arabia),2019-01,0,3,31
+port275,Dammam (Saudi Arabia),2019-02,998,2,28
+port275,Dammam (Saudi Arabia),2019-03,998,2,31
+port275,Dammam (Saudi Arabia),2019-04,998,3,30
+port275,Dammam (Saudi Arabia),2019-05,0,3,31
+port275,Dammam (Saudi Arabia),2019-06,998,5,30
+port275,Dammam (Saudi Arabia),2019-07,1432,6,31
+port275,Dammam (Saudi Arabia),2019-08,4567,5,31
+port275,Dammam (Saudi Arabia),2019-09,1996,5,30
+port275,Dammam (Saudi Arabia),2019-10,0,6,31
+port275,Dammam (Saudi Arabia),2019-11,0,1,30
+port275,Dammam (Saudi Arabia),2019-12,0,2,31
+port275,Dammam (Saudi Arabia),2020-01,0,1,31
+port275,Dammam (Saudi Arabia),2020-02,998,1,29
+port275,Dammam (Saudi Arabia),2020-03,0,0,31
+port275,Dammam (Saudi Arabia),2020-04,868,4,30
+port275,Dammam (Saudi Arabia),2020-05,4567,5,31
+port275,Dammam (Saudi Arabia),2020-06,1737,5,30
+port275,Dammam (Saudi Arabia),2020-07,0,0,31
+port275,Dammam (Saudi Arabia),2020-08,434,3,31
+port275,Dammam (Saudi Arabia),2020-09,1302,3,30
+port275,Dammam (Saudi Arabia),2020-10,3973,2,31
+port275,Dammam (Saudi Arabia),2020-11,5282,2,30
+port275,Dammam (Saudi Arabia),2020-12,0,0,31
+port275,Dammam (Saudi Arabia),2021-01,0,2,31
+port275,Dammam (Saudi Arabia),2021-02,0,1,28
+port275,Dammam (Saudi Arabia),2021-03,0,2,31
+port275,Dammam (Saudi Arabia),2021-04,5354,5,30
+port275,Dammam (Saudi Arabia),2021-05,434,5,31
+port275,Dammam (Saudi Arabia),2021-06,7354,5,30
+port275,Dammam (Saudi Arabia),2021-07,434,3,31
+port275,Dammam (Saudi Arabia),2021-08,6519,7,31
+port275,Dammam (Saudi Arabia),2021-09,32074,5,30
+port275,Dammam (Saudi Arabia),2021-10,2910,5,31
+port275,Dammam (Saudi Arabia),2021-11,434,1,30
+port275,Dammam (Saudi Arabia),2021-12,0,3,31
+port275,Dammam (Saudi Arabia),2022-01,4763,6,31
+port275,Dammam (Saudi Arabia),2022-02,434,2,28
+port275,Dammam (Saudi Arabia),2022-03,0,4,31
+port275,Dammam (Saudi Arabia),2022-04,434,3,30
+port275,Dammam (Saudi Arabia),2022-05,0,1,31
+port275,Dammam (Saudi Arabia),2022-06,1302,4,30
+port275,Dammam (Saudi Arabia),2022-07,868,3,31
+port275,Dammam (Saudi Arabia),2022-08,0,3,31
+port275,Dammam (Saudi Arabia),2022-09,0,0,30
+port275,Dammam (Saudi Arabia),2022-10,434,4,31
+port275,Dammam (Saudi Arabia),2022-11,0,1,30
+port275,Dammam (Saudi Arabia),2022-12,5001,4,31
+port275,Dammam (Saudi Arabia),2023-01,0,2,31
+port275,Dammam (Saudi Arabia),2023-02,868,2,28
+port275,Dammam (Saudi Arabia),2023-03,868,6,31
+port275,Dammam (Saudi Arabia),2023-04,0,3,30
+port275,Dammam (Saudi Arabia),2023-05,0,2,31
+port275,Dammam (Saudi Arabia),2023-06,868,4,30
+port275,Dammam (Saudi Arabia),2023-07,3381,4,31
+port275,Dammam (Saudi Arabia),2023-08,434,3,31
+port275,Dammam (Saudi Arabia),2023-09,0,3,30
+port275,Dammam (Saudi Arabia),2023-10,0,3,31
+port275,Dammam (Saudi Arabia),2023-11,434,2,30
+port275,Dammam (Saudi Arabia),2023-12,590,1,31
+port275,Dammam (Saudi Arabia),2024-01,434,2,31
+port275,Dammam (Saudi Arabia),2024-02,0,3,29
+port275,Dammam (Saudi Arabia),2024-03,0,0,31
+port275,Dammam (Saudi Arabia),2024-04,1301,2,30
+port275,Dammam (Saudi Arabia),2024-05,787,2,31
+port275,Dammam (Saudi Arabia),2024-06,1064,4,30
+port275,Dammam (Saudi Arabia),2024-07,908,2,31
+port275,Dammam (Saudi Arabia),2024-08,434,2,31
+port275,Dammam (Saudi Arabia),2024-09,868,4,30
+port275,Dammam (Saudi Arabia),2024-10,1432,3,31
+port275,Dammam (Saudi Arabia),2024-11,0,1,30
+port275,Dammam (Saudi Arabia),2024-12,237,4,31
+port275,Dammam (Saudi Arabia),2025-01,0,3,31
+port275,Dammam (Saudi Arabia),2025-02,0,0,28
+port275,Dammam (Saudi Arabia),2025-03,434,1,31
+port275,Dammam (Saudi Arabia),2025-04,0,1,30
+port275,Dammam (Saudi Arabia),2025-05,868,2,31
+port275,Dammam (Saudi Arabia),2025-06,434,1,30
+port275,Dammam (Saudi Arabia),2025-07,2300,5,31
+port275,Dammam (Saudi Arabia),2025-08,2170,5,31
+port275,Dammam (Saudi Arabia),2025-09,1866,4,30
+port275,Dammam (Saudi Arabia),2025-10,1419,5,31
+port275,Dammam (Saudi Arabia),2025-11,868,3,30
+port275,Dammam (Saudi Arabia),2025-12,1302,3,31
+port275,Dammam (Saudi Arabia),2026-01,2430,4,31
+port275,Dammam (Saudi Arabia),2026-02,434,1,28
+port275,Dammam (Saudi Arabia),2026-03,868,2,31
+port275,Dammam (Saudi Arabia),2026-04,434,1,30
+port275,Dammam (Saudi Arabia),2026-05,434,1,15
+port362,Fujairah (UAE),2019-01,2102852,214,31
+port362,Fujairah (UAE),2019-02,2268313,205,28
+port362,Fujairah (UAE),2019-03,2856148,250,31
+port362,Fujairah (UAE),2019-04,3119890,245,30
+port362,Fujairah (UAE),2019-05,3035245,240,31
+port362,Fujairah (UAE),2019-06,3426511,229,30
+port362,Fujairah (UAE),2019-07,3134203,219,31
+port362,Fujairah (UAE),2019-08,3037459,237,31
+port362,Fujairah (UAE),2019-09,3344628,235,30
+port362,Fujairah (UAE),2019-10,2722301,257,31
+port362,Fujairah (UAE),2019-11,3302422,253,30
+port362,Fujairah (UAE),2019-12,3871762,274,31
+port362,Fujairah (UAE),2020-01,3093181,267,31
+port362,Fujairah (UAE),2020-02,2669394,243,29
+port362,Fujairah (UAE),2020-03,2750377,257,31
+port362,Fujairah (UAE),2020-04,2232940,239,30
+port362,Fujairah (UAE),2020-05,1907419,217,31
+port362,Fujairah (UAE),2020-06,2834220,186,30
+port362,Fujairah (UAE),2020-07,3309255,213,31
+port362,Fujairah (UAE),2020-08,3128899,242,31
+port362,Fujairah (UAE),2020-09,2968643,237,30
+port362,Fujairah (UAE),2020-10,3332677,257,31
+port362,Fujairah (UAE),2020-11,2742186,240,30
+port362,Fujairah (UAE),2020-12,3103714,233,31
+port362,Fujairah (UAE),2021-01,3890326,258,31
+port362,Fujairah (UAE),2021-02,3166270,227,28
+port362,Fujairah (UAE),2021-03,3325267,260,31
+port362,Fujairah (UAE),2021-04,3541901,266,30
+port362,Fujairah (UAE),2021-05,3212843,249,31
+port362,Fujairah (UAE),2021-06,4073299,253,30
+port362,Fujairah (UAE),2021-07,4359232,279,31
+port362,Fujairah (UAE),2021-08,3248184,277,31
+port362,Fujairah (UAE),2021-09,3628919,260,30
+port362,Fujairah (UAE),2021-10,4356997,281,31
+port362,Fujairah (UAE),2021-11,3341259,290,30
+port362,Fujairah (UAE),2021-12,3289324,247,31
+port362,Fujairah (UAE),2022-01,2647115,247,31
+port362,Fujairah (UAE),2022-02,3371923,251,28
+port362,Fujairah (UAE),2022-03,3799495,271,31
+port362,Fujairah (UAE),2022-04,3157373,261,30
+port362,Fujairah (UAE),2022-05,3873272,291,31
+port362,Fujairah (UAE),2022-06,3366418,288,30
+port362,Fujairah (UAE),2022-07,3146921,254,31
+port362,Fujairah (UAE),2022-08,3562166,290,31
+port362,Fujairah (UAE),2022-09,3306075,272,30
+port362,Fujairah (UAE),2022-10,3871296,274,31
+port362,Fujairah (UAE),2022-11,3073523,249,30
+port362,Fujairah (UAE),2022-12,3176453,280,31
+port362,Fujairah (UAE),2023-01,2567809,247,31
+port362,Fujairah (UAE),2023-02,2787701,237,28
+port362,Fujairah (UAE),2023-03,3431165,300,31
+port362,Fujairah (UAE),2023-04,3105053,273,30
+port362,Fujairah (UAE),2023-05,3463909,289,31
+port362,Fujairah (UAE),2023-06,3412192,281,30
+port362,Fujairah (UAE),2023-07,3081910,282,31
+port362,Fujairah (UAE),2023-08,4124436,291,31
+port362,Fujairah (UAE),2023-09,2910236,270,30
+port362,Fujairah (UAE),2023-10,4090305,290,31
+port362,Fujairah (UAE),2023-11,3512323,299,30
+port362,Fujairah (UAE),2023-12,3094311,271,31
+port362,Fujairah (UAE),2024-01,2903029,250,31
+port362,Fujairah (UAE),2024-02,2675301,246,29
+port362,Fujairah (UAE),2024-03,3071996,272,31
+port362,Fujairah (UAE),2024-04,2957758,253,30
+port362,Fujairah (UAE),2024-05,3374677,281,31
+port362,Fujairah (UAE),2024-06,3358748,282,30
+port362,Fujairah (UAE),2024-07,3420350,267,31
+port362,Fujairah (UAE),2024-08,3523580,291,31
+port362,Fujairah (UAE),2024-09,3194518,287,30
+port362,Fujairah (UAE),2024-10,3627006,279,31
+port362,Fujairah (UAE),2024-11,3176957,280,30
+port362,Fujairah (UAE),2024-12,3613861,307,31
+port362,Fujairah (UAE),2025-01,3378747,299,31
+port362,Fujairah (UAE),2025-02,3082930,265,28
+port362,Fujairah (UAE),2025-03,3096276,316,31
+port362,Fujairah (UAE),2025-04,2876222,272,30
+port362,Fujairah (UAE),2025-05,3575852,297,31
+port362,Fujairah (UAE),2025-06,3109922,278,30
+port362,Fujairah (UAE),2025-07,3250137,285,31
+port362,Fujairah (UAE),2025-08,3470758,301,31
+port362,Fujairah (UAE),2025-09,3207049,301,30
+port362,Fujairah (UAE),2025-10,3423343,316,31
+port362,Fujairah (UAE),2025-11,2728375,267,30
+port362,Fujairah (UAE),2025-12,3280026,272,31
+port362,Fujairah (UAE),2026-01,2999388,273,31
+port362,Fujairah (UAE),2026-02,2615462,245,28
+port362,Fujairah (UAE),2026-03,147106,21,31
+port362,Fujairah (UAE),2026-04,1071846,71,30
+port362,Fujairah (UAE),2026-05,108029,10,15
+port743,Mina Al Ahmadi (Kuwait),2019-01,1944634,49,31
+port743,Mina Al Ahmadi (Kuwait),2019-02,1750146,39,28
+port743,Mina Al Ahmadi (Kuwait),2019-03,1802478,42,31
+port743,Mina Al Ahmadi (Kuwait),2019-04,1785391,47,30
+port743,Mina Al Ahmadi (Kuwait),2019-05,2061250,47,31
+port743,Mina Al Ahmadi (Kuwait),2019-06,1706721,47,30
+port743,Mina Al Ahmadi (Kuwait),2019-07,1602517,51,31
+port743,Mina Al Ahmadi (Kuwait),2019-08,2305778,45,31
+port743,Mina Al Ahmadi (Kuwait),2019-09,1305854,41,30
+port743,Mina Al Ahmadi (Kuwait),2019-10,2200489,49,31
+port743,Mina Al Ahmadi (Kuwait),2019-11,2749688,48,30
+port743,Mina Al Ahmadi (Kuwait),2019-12,1825386,37,31
+port743,Mina Al Ahmadi (Kuwait),2020-01,2417679,38,31
+port743,Mina Al Ahmadi (Kuwait),2020-02,2231974,37,29
+port743,Mina Al Ahmadi (Kuwait),2020-03,2158630,38,31
+port743,Mina Al Ahmadi (Kuwait),2020-04,1980668,50,30
+port743,Mina Al Ahmadi (Kuwait),2020-05,1682555,47,31
+port743,Mina Al Ahmadi (Kuwait),2020-06,1837097,48,30
+port743,Mina Al Ahmadi (Kuwait),2020-07,2577034,42,31
+port743,Mina Al Ahmadi (Kuwait),2020-08,2156022,47,31
+port743,Mina Al Ahmadi (Kuwait),2020-09,1929831,49,30
+port743,Mina Al Ahmadi (Kuwait),2020-10,2383827,49,31
+port743,Mina Al Ahmadi (Kuwait),2020-11,2520485,47,30
+port743,Mina Al Ahmadi (Kuwait),2020-12,2670199,44,31
+port743,Mina Al Ahmadi (Kuwait),2021-01,1737594,31,31
+port743,Mina Al Ahmadi (Kuwait),2021-02,920286,31,28
+port743,Mina Al Ahmadi (Kuwait),2021-03,1398978,35,31
+port743,Mina Al Ahmadi (Kuwait),2021-04,1447470,43,30
+port743,Mina Al Ahmadi (Kuwait),2021-05,1576040,39,31
+port743,Mina Al Ahmadi (Kuwait),2021-06,1575204,45,30
+port743,Mina Al Ahmadi (Kuwait),2021-07,2446316,45,31
+port743,Mina Al Ahmadi (Kuwait),2021-08,2061079,49,31
+port743,Mina Al Ahmadi (Kuwait),2021-09,2226226,45,30
+port743,Mina Al Ahmadi (Kuwait),2021-10,1334005,40,31
+port743,Mina Al Ahmadi (Kuwait),2021-11,2161585,35,30
+port743,Mina Al Ahmadi (Kuwait),2021-12,1976953,40,31
+port743,Mina Al Ahmadi (Kuwait),2022-01,2319402,41,31
+port743,Mina Al Ahmadi (Kuwait),2022-02,1647870,35,28
+port743,Mina Al Ahmadi (Kuwait),2022-03,1856623,32,31
+port743,Mina Al Ahmadi (Kuwait),2022-04,1666632,29,30
+port743,Mina Al Ahmadi (Kuwait),2022-05,1378699,37,31
+port743,Mina Al Ahmadi (Kuwait),2022-06,2333714,40,30
+port743,Mina Al Ahmadi (Kuwait),2022-07,1745059,47,31
+port743,Mina Al Ahmadi (Kuwait),2022-08,2327838,47,31
+port743,Mina Al Ahmadi (Kuwait),2022-09,1565779,37,30
+port743,Mina Al Ahmadi (Kuwait),2022-10,1187169,28,31
+port743,Mina Al Ahmadi (Kuwait),2022-11,2018667,38,30
+port743,Mina Al Ahmadi (Kuwait),2022-12,1486967,37,31
+port743,Mina Al Ahmadi (Kuwait),2023-01,1904894,39,31
+port743,Mina Al Ahmadi (Kuwait),2023-02,1469891,40,28
+port743,Mina Al Ahmadi (Kuwait),2023-03,1980475,41,31
+port743,Mina Al Ahmadi (Kuwait),2023-04,1442487,26,30
+port743,Mina Al Ahmadi (Kuwait),2023-05,1688629,35,31
+port743,Mina Al Ahmadi (Kuwait),2023-06,1779932,39,30
+port743,Mina Al Ahmadi (Kuwait),2023-07,1703224,42,31
+port743,Mina Al Ahmadi (Kuwait),2023-08,1729102,39,31
+port743,Mina Al Ahmadi (Kuwait),2023-09,1749741,35,30
+port743,Mina Al Ahmadi (Kuwait),2023-10,2140986,40,31
+port743,Mina Al Ahmadi (Kuwait),2023-11,1550928,34,30
+port743,Mina Al Ahmadi (Kuwait),2023-12,1927186,33,31
+port743,Mina Al Ahmadi (Kuwait),2024-01,1480260,41,31
+port743,Mina Al Ahmadi (Kuwait),2024-02,1612243,37,29
+port743,Mina Al Ahmadi (Kuwait),2024-03,1531418,37,31
+port743,Mina Al Ahmadi (Kuwait),2024-04,2580970,36,30
+port743,Mina Al Ahmadi (Kuwait),2024-05,1927663,32,31
+port743,Mina Al Ahmadi (Kuwait),2024-06,1857042,35,30
+port743,Mina Al Ahmadi (Kuwait),2024-07,1532628,32,31
+port743,Mina Al Ahmadi (Kuwait),2024-08,1302570,31,31
+port743,Mina Al Ahmadi (Kuwait),2024-09,1929038,38,30
+port743,Mina Al Ahmadi (Kuwait),2024-10,1781387,40,31
+port743,Mina Al Ahmadi (Kuwait),2024-11,1473356,38,30
+port743,Mina Al Ahmadi (Kuwait),2024-12,1835211,40,31
+port743,Mina Al Ahmadi (Kuwait),2025-01,1704482,41,31
+port743,Mina Al Ahmadi (Kuwait),2025-02,1545661,45,28
+port743,Mina Al Ahmadi (Kuwait),2025-03,1734638,43,31
+port743,Mina Al Ahmadi (Kuwait),2025-04,2041980,39,30
+port743,Mina Al Ahmadi (Kuwait),2025-05,2039134,46,31
+port743,Mina Al Ahmadi (Kuwait),2025-06,1481317,42,30
+port743,Mina Al Ahmadi (Kuwait),2025-07,1807274,43,31
+port743,Mina Al Ahmadi (Kuwait),2025-08,1789074,38,31
+port743,Mina Al Ahmadi (Kuwait),2025-09,1879928,38,30
+port743,Mina Al Ahmadi (Kuwait),2025-10,1522946,38,31
+port743,Mina Al Ahmadi (Kuwait),2025-11,2031909,41,30
+port743,Mina Al Ahmadi (Kuwait),2025-12,1775355,34,31
+port743,Mina Al Ahmadi (Kuwait),2026-01,1606820,35,31
+port743,Mina Al Ahmadi (Kuwait),2026-02,1645241,36,28
+port743,Mina Al Ahmadi (Kuwait),2026-03,532135,18,31
+port743,Mina Al Ahmadi (Kuwait),2026-04,62003,1,30
+port743,Mina Al Ahmadi (Kuwait),2026-05,0,0,15
+port744,Jebel Ali (UAE),2019-01,84799,59,31
+port744,Jebel Ali (UAE),2019-02,338830,38,28
+port744,Jebel Ali (UAE),2019-03,375563,58,31
+port744,Jebel Ali (UAE),2019-04,302075,49,30
+port744,Jebel Ali (UAE),2019-05,296003,57,31
+port744,Jebel Ali (UAE),2019-06,481498,72,30
+port744,Jebel Ali (UAE),2019-07,564162,110,31
+port744,Jebel Ali (UAE),2019-08,332974,88,31
+port744,Jebel Ali (UAE),2019-09,458069,93,30
+port744,Jebel Ali (UAE),2019-10,638948,101,31
+port744,Jebel Ali (UAE),2019-11,545804,95,30
+port744,Jebel Ali (UAE),2019-12,442269,92,31
+port744,Jebel Ali (UAE),2020-01,264820,84,31
+port744,Jebel Ali (UAE),2020-02,510908,91,29
+port744,Jebel Ali (UAE),2020-03,555486,98,31
+port744,Jebel Ali (UAE),2020-04,355960,97,30
+port744,Jebel Ali (UAE),2020-05,200643,90,31
+port744,Jebel Ali (UAE),2020-06,479235,88,30
+port744,Jebel Ali (UAE),2020-07,498070,109,31
+port744,Jebel Ali (UAE),2020-08,606151,114,31
+port744,Jebel Ali (UAE),2020-09,563851,104,30
+port744,Jebel Ali (UAE),2020-10,480311,106,31
+port744,Jebel Ali (UAE),2020-11,590293,96,30
+port744,Jebel Ali (UAE),2020-12,448774,113,31
+port744,Jebel Ali (UAE),2021-01,474721,118,31
+port744,Jebel Ali (UAE),2021-02,562837,102,28
+port744,Jebel Ali (UAE),2021-03,614118,99,31
+port744,Jebel Ali (UAE),2021-04,379095,97,30
+port744,Jebel Ali (UAE),2021-05,484583,104,31
+port744,Jebel Ali (UAE),2021-06,519713,99,30
+port744,Jebel Ali (UAE),2021-07,444381,102,31
+port744,Jebel Ali (UAE),2021-08,550235,105,31
+port744,Jebel Ali (UAE),2021-09,512986,110,30
+port744,Jebel Ali (UAE),2021-10,589265,99,31
+port744,Jebel Ali (UAE),2021-11,386223,99,30
+port744,Jebel Ali (UAE),2021-12,642122,122,31
+port744,Jebel Ali (UAE),2022-01,706778,114,31
+port744,Jebel Ali (UAE),2022-02,487566,117,28
+port744,Jebel Ali (UAE),2022-03,529829,121,31
+port744,Jebel Ali (UAE),2022-04,753887,127,30
+port744,Jebel Ali (UAE),2022-05,697205,129,31
+port744,Jebel Ali (UAE),2022-06,819658,116,30
+port744,Jebel Ali (UAE),2022-07,579767,121,31
+port744,Jebel Ali (UAE),2022-08,692983,136,31
+port744,Jebel Ali (UAE),2022-09,692810,126,30
+port744,Jebel Ali (UAE),2022-10,800656,135,31
+port744,Jebel Ali (UAE),2022-11,584689,130,30
+port744,Jebel Ali (UAE),2022-12,742524,137,31
+port744,Jebel Ali (UAE),2023-01,831802,157,31
+port744,Jebel Ali (UAE),2023-02,815946,141,28
+port744,Jebel Ali (UAE),2023-03,714336,153,31
+port744,Jebel Ali (UAE),2023-04,740780,126,30
+port744,Jebel Ali (UAE),2023-05,572739,143,31
+port744,Jebel Ali (UAE),2023-06,883459,148,30
+port744,Jebel Ali (UAE),2023-07,1083533,154,31
+port744,Jebel Ali (UAE),2023-08,996643,136,31
+port744,Jebel Ali (UAE),2023-09,814554,150,30
+port744,Jebel Ali (UAE),2023-10,694987,126,31
+port744,Jebel Ali (UAE),2023-11,658203,131,30
+port744,Jebel Ali (UAE),2023-12,725539,143,31
+port744,Jebel Ali (UAE),2024-01,814620,140,31
+port744,Jebel Ali (UAE),2024-02,618819,114,29
+port744,Jebel Ali (UAE),2024-03,727179,131,31
+port744,Jebel Ali (UAE),2024-04,512768,134,30
+port744,Jebel Ali (UAE),2024-05,676038,124,31
+port744,Jebel Ali (UAE),2024-06,643688,124,30
+port744,Jebel Ali (UAE),2024-07,699086,125,31
+port744,Jebel Ali (UAE),2024-08,772493,133,31
+port744,Jebel Ali (UAE),2024-09,677251,127,30
+port744,Jebel Ali (UAE),2024-10,641470,132,31
+port744,Jebel Ali (UAE),2024-11,482805,117,30
+port744,Jebel Ali (UAE),2024-12,463032,126,31
+port744,Jebel Ali (UAE),2025-01,426328,123,31
+port744,Jebel Ali (UAE),2025-02,428969,105,28
+port744,Jebel Ali (UAE),2025-03,695763,130,31
+port744,Jebel Ali (UAE),2025-04,491446,134,30
+port744,Jebel Ali (UAE),2025-05,493314,123,31
+port744,Jebel Ali (UAE),2025-06,446587,128,30
+port744,Jebel Ali (UAE),2025-07,522497,118,31
+port744,Jebel Ali (UAE),2025-08,647507,127,31
+port744,Jebel Ali (UAE),2025-09,574093,140,30
+port744,Jebel Ali (UAE),2025-10,366395,116,31
+port744,Jebel Ali (UAE),2025-11,579670,133,30
+port744,Jebel Ali (UAE),2025-12,465640,132,31
+port744,Jebel Ali (UAE),2026-01,588798,128,31
+port744,Jebel Ali (UAE),2026-02,499196,120,28
+port744,Jebel Ali (UAE),2026-03,24323,11,31
+port744,Jebel Ali (UAE),2026-04,204958,20,30
+port744,Jebel Ali (UAE),2026-05,38820,7,15

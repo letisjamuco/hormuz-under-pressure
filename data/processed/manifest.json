@@ -1,0 +1,36 @@
+{
+  "generated_at": "2026-05-21T09:15:00Z",
+  "source_zip": "dataset.zip (06_new_data)",
+  "used_sources": [
+    {
+      "source": "IMF PortWatch (via HumData)",
+      "processed_files": ["hormuz_daily.csv","chokepoints_daily.csv","chokepoints_summary.csv","hormuz_before_after.csv"],
+      "role": "Daily transit calls and capacity for Hormuz + 28 chokepoints worldwide."
+    },
+    {
+      "source": "IMF PortWatch — Disruptions Database",
+      "processed_files": ["hormuz_events.csv"],
+      "role": "HORMUZ-26 and RED SEA TENSIONS disruption markers."
+    },
+    {
+      "source": "IMF PortWatch — Daily Ports Data",
+      "processed_files": ["gulf_ports_monthly.csv"],
+      "role": "Monthly tanker export volumes from Gulf ports for flow map."
+    },
+    {
+      "source": "FRED / U.S. EIA (DCOILBRENTEU + DJFUELUSGULF)",
+      "processed_files": ["market_prices.csv"],
+      "role": "Daily Brent crude and jet fuel spot prices."
+    },
+    {
+      "source": "Approximate coordinates (Wikipedia / OpenStreetMap)",
+      "processed_files": ["chokepoint_locations.csv"],
+      "role": "Lat/lon of all 28 chokepoints for the world map."
+    },
+    {
+      "source": "U.S. EIA Today in Energy",
+      "processed_files": [],
+      "role": "Context facts about Hormuz oil flows."
+    }
+  ]
+}

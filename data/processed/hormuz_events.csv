@@ -1,0 +1,3 @@
+eventid,eventtype,eventname,alertlevel,fromdate,fromdate_parsed,todate,affectedports,lat,long,severitytext
+10000004,OT,HORMUZ-26,RED,3/1/2026 12:00:00 AM,2026-03-01,,chokepoint6,26.29685,56.85985,
+1000000,OT,RED SEA TENSIONS,RED,12/16/2023 12:00:00 AM,2023-12-16,,chokepoint4;chokepoint1;chokepoint7,20.31573,38.73504,Attacks on commercial ships
