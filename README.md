@@ -25,6 +25,17 @@ Then open:
 http://localhost:8000
 ```
 
+
+## Project proposal
+
+The final project proposal is included in:
+
+```text
+docs/Hormuz_Under_Pressure_Project_Proposal.pdf
+```
+
+The website also includes a "Project proposal" button that opens the PDF in a modal viewer.
+
 ## Main files
 
 - `index.html` - page structure and story chapters

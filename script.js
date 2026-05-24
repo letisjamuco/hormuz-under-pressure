@@ -480,3 +480,22 @@ function highlightNomos(nomos,sendToMap=true){
   st.nomos=nomos; st.nomosAdded=nomos; renderNomos(nomosDataset(window.__DATA__));
   if(sendToMap){const iframe=document.getElementById('greece-map-iframe');if(iframe)iframe.contentWindow.postMessage({type:'highlight-nomos',nomos},'*');}
 }
+
+function initProposalModal(){
+  const modal=document.getElementById('proposal-modal');
+  if(!modal)return;
+  const openers=document.querySelectorAll('[data-open-proposal]');
+  const closers=document.querySelectorAll('[data-close-proposal]');
+  const open=()=>{modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');};
+  const close=()=>{modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open');};
+  openers.forEach(btn=>btn.addEventListener('click',open));
+  closers.forEach(btn=>btn.addEventListener('click',close));
+  modal.addEventListener('click',ev=>{if(ev.target===modal)close();});
+  document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&modal.classList.contains('is-open'))close();});
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',initProposalModal);
+}else{
+  initProposalModal();
+}

@@ -33,7 +33,7 @@
         <p class="eyebrow">IMF PortWatch · FRED/EIA · fuelprices.gr</p>
         <h1><span>Hormuz</span> Under Pressure</h1>
         <p class="hero__lead">How a narrow maritime chokepoint concentrates energy risk - from tanker traffic and oil benchmarks to fuel prices at Greek petrol stations.</p>
-        <div class="hero__actions"><a class="btn" href="#ch1">Start the story</a><a class="btn btn--ghost" href="#credits">Data sources</a><a class="btn btn--ghost" href="#video-section">Watch the video</a></div>
+        <div class="hero__actions"><a class="btn" href="#ch1">Start the story</a><a class="btn btn--ghost" href="#credits">Data sources</a><a class="btn btn--ghost" href="#video-section">Watch the video</a><button class="btn btn--ghost" type="button" data-open-proposal>Project proposal</button></div>
         <section class="storyline storyline--hero">
           <div class="storyline__step"><span>1</span><strong>Locate the gate</strong><p>Where the risk sits.</p></div>
           <div class="storyline__step"><span>2</span><strong>Compare globally</strong><p>Why Hormuz matters most.</p></div>
@@ -223,6 +223,7 @@
         <article class="credits__card"><span class="credits__role">Data cleaning</span><h3 class="credits__name">Alexandra Kaliakouda <a class="credits__linkedin-icon" href="https://www.linkedin.com/in/alexandra-kaliakouda-5b5b09162" target="_blank"><svg viewBox="0 0 24 24"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.35 8.2h4.3V24H.35V8.2zM8.02 8.2h4.12v2.16h.06c.57-1.08 1.98-2.22 4.08-2.22 4.36 0 5.17 2.87 5.17 6.6V24h-4.3v-8.2c0-1.96-.04-4.48-2.73-4.48-2.73 0-3.15 2.13-3.15 4.34V24H8.02V8.2z"/></svg></a></h3><span class="credits__email">kaliak@di.uoa.gr</span></article>
       </div>
       <div class="credits__sources"><h4 class="credits__sources-title">Data sources</h4>
+        <p class="credits__proposal"><button type="button" class="text-button" data-open-proposal>Open project proposal PDF</button></p>
         <ul>
           <li><a href="https://portwatch.imf.org" target="_blank">IMF PortWatch - Chokepoint Transit Calls &amp; Disruptions</a></li>
           <li><a href="https://fred.stlouisfed.org/series/DCOILBRENTEU" target="_blank">FRED / U.S. EIA - Brent Crude (DCOILBRENTEU)</a></li>
@@ -238,6 +239,16 @@
   </footer>
 
   <div id="tooltip" class="tooltip"></div>
+  <div class="pdf-modal" id="proposal-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="proposal-modal-title">
+    <div class="pdf-modal__panel">
+      <div class="pdf-modal__header">
+        <h2 id="proposal-modal-title">Project proposal</h2>
+        <button type="button" class="pdf-modal__close" data-close-proposal aria-label="Close proposal">Close</button>
+      </div>
+      <iframe class="pdf-modal__frame" src="docs/Hormuz_Under_Pressure_Project_Proposal.pdf" title="Hormuz Under Pressure project proposal"></iframe>
+      <p class="pdf-modal__fallback"><a href="docs/Hormuz_Under_Pressure_Project_Proposal.pdf" target="_blank" rel="noopener">Open PDF in a new tab</a></p>
+    </div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="script.js"></script>
 </body>
