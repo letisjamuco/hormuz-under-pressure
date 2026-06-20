@@ -2,10 +2,38 @@
 <html><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-html,body{margin:0;padding:0;height:100%;overflow:hidden;background:transparent}#map{position:relative;width:100%;height:100%}svg{display:block;width:100%;height:100%;cursor:grab}.is-dragging svg{cursor:grabbing}.sphere{fill:#f8fbf7;stroke:#0f4d46;stroke-opacity:.34;stroke-width:1.2}.country{stroke:#fff;stroke-width:.45;vector-effect:non-scaling-stroke}.country--base{fill:#d5ded9}.country--active{stroke:#0f4d46;stroke-width:1.4}.route{fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:stroke}.hormuz-dot{fill:#d36a38;stroke:#fff;stroke-width:1.2}.status{position:absolute;left:12px;top:12px;z-index:5;max-width:330px;padding:8px 10px;border:1px solid rgba(14,74,66,.14);border-radius:999px;background:rgba(255,255,255,.9);box-shadow:0 8px 22px -18px rgba(8,44,40,.4);font:11px/1.35 'Space Mono',ui-monospace,monospace;color:#174f47}.status strong{color:#082c28}.status em{font-style:normal;color:#6d8e86}.hint{position:absolute;right:12px;bottom:10px;z-index:5;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,.78);font:10px/1 'Space Mono',ui-monospace,monospace;color:#5a7770}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:transparent}
+#map{position:relative;width:100%;height:100%}
+svg{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+.is-dragging svg{cursor:grabbing}
+.sphere{fill:#f7fbf8;stroke:#0f4d46;stroke-opacity:.30;stroke-width:1.15}
+.country{stroke:#fff;stroke-width:.45;vector-effect:non-scaling-stroke}
+.country--base{fill:#d7e0dc}
+.country--data{cursor:pointer}
+.country--active{stroke:#0f4d46;stroke-width:1.6}
+.route{fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.focus-point{pointer-events:none}
+.overlay{position:absolute;z-index:5;display:flex;gap:8px;align-items:center}
+.overlay--status{left:12px;top:12px;max-width:min(360px,70%)}
+.overlay--controls{right:12px;top:12px}
+.pill{padding:8px 10px;border:1px solid rgba(14,74,66,.14);border-radius:999px;background:rgba(255,255,255,.9);box-shadow:0 8px 22px -18px rgba(8,44,40,.38);font:11px/1.35 'Space Mono',ui-monospace,monospace;color:#174f47}
+.pill strong{color:#082c28}
+.pill em{font-style:normal;color:#6d8e86}
+.control-btn{appearance:none;border:1px solid rgba(14,74,66,.15);border-radius:999px;background:rgba(255,255,255,.94);padding:8px 12px;font:700 11px/1 'Space Mono',ui-monospace,monospace;color:#174f47;cursor:pointer;box-shadow:0 8px 22px -18px rgba(8,44,40,.38)}
+.control-btn:hover{background:#fff}
+.control-btn:focus-visible{outline:2px solid rgba(15,77,70,.28);outline-offset:2px}
+@media (max-width:720px){
+  .overlay--status{max-width:72%;left:10px;top:10px}
+  .overlay--controls{right:10px;top:10px}
+  .pill,.control-btn{font-size:10px}
+}
 </style>
 </head><body>
-<div id="map"><svg aria-label="Orthographic map of Hormuz oil origins and destinations"></svg><div class="status" id="status">Click a bar below to tour the globe. <em>Drag to rotate.</em></div><div class="hint">origin → Hormuz · Hormuz → market</div></div>
+<div id="map">
+  <svg aria-label="Orthographic globe showing Hormuz oil origins and destination markets"></svg>
+  <div class="overlay overlay--status"><div class="pill" id="status">Click a bar or country to focus one route. <em>Drag to rotate.</em></div></div>
+  <div class="overlay overlay--controls"><button type="button" class="control-btn" id="reset-view">Reset</button></div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script>
@@ -20,132 +48,181 @@ class Versor {
 const container=document.getElementById('map');
 const svg=d3.select('svg');
 const status=d3.select('#status');
+const resetBtn=document.getElementById('reset-view');
 const fmt=d3.format(',.1f');
 const hz=[56.65,26.35];
-const tilt=20;
+const tilt=18;
+const defaultRotate=[-hz[0],tilt-hz[1],0];
 const normalize=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
 const properCase=s=>String(s||'').toLowerCase().replace(/\b\w/g,m=>m.toUpperCase());
-const originAliases={
-  'saudi arabia':'SAUDI ARABIA','united arab emirates':'UNITED ARAB EMIRATES','uae':'UNITED ARAB EMIRATES','iran':'IRAN','iraq':'IRAQ','kuwait':'KUWAIT','qatar':'QATAR'
-};
-const destinationAliases={
-  'china':'China','india':'India','japan':'Japan','south korea':'South Korea','korea republic of':'South Korea','republic of korea':'South Korea','united states':'United States','united states of america':'United States','saudi arabia':'Saudi Arabia'
-};
+const originAliases={'saudi arabia':'SAUDI ARABIA','united arab emirates':'UNITED ARAB EMIRATES','uae':'UNITED ARAB EMIRATES','iran':'IRAN','iraq':'IRAQ','kuwait':'KUWAIT','qatar':'QATAR'};
+const destinationAliases={'china':'China','india':'India','japan':'Japan','south korea':'South Korea','korea republic of':'South Korea','republic of korea':'South Korea','united states':'United States','united states of america':'United States'};
 const europeSet=new Set(['Albania','Andorra','Austria','Belarus','Belgium','Bosnia and Herzegovina','Bosnia and Herz.','Bulgaria','Croatia','Czech Republic','Czechia','Denmark','Estonia','Finland','France','Germany','Greece','Hungary','Iceland','Ireland','Italy','Kosovo','Latvia','Liechtenstein','Lithuania','Luxembourg','Malta','Moldova','Monaco','Montenegro','Netherlands','North Macedonia','Macedonia','North Macedonia Republic','Norway','Poland','Portugal','Romania','San Marino','Serbia','Slovakia','Slovenia','Spain','Sweden','Switzerland','Ukraine','United Kingdom','Vatican','Vatican City'].map(normalize));
 
-let width=0,height=0,baseScale=1;
-let projection=d3.geoOrthographic().rotate([-hz[0],tilt-hz[1],0]).precision(.2).clipAngle(90);
-let path=d3.geoPath(projection);
-let sphere={type:'Sphere'},countries=[],borders=null;
+let width=0,height=0,baseScale=1,currentZoom=1;
+const projection=d3.geoOrthographic().precision(.2).clipAngle(90).rotate(defaultRotate);
+const path=d3.geoPath(projection);
+const sphere={type:'Sphere'};
+let countries=[],borders;
 let originRows=[],destinationRows=[];
 let originValue=new Map(),destinationValue=new Map();
 let originScale,destinationScale;
 let selected=null,hovered=null;
-let countrySel,routeSel,dotSel;
+let countrySel,borderSel,routeSel,focusSel;
+let zoomBehavior;
 
 function matchOrigin(props){return originAliases[normalize(props.name||props.NAME||props.ADMIN||props.admin||'')]||null;}
-function matchDestination(props){const key=normalize(props.name||props.NAME||props.ADMIN||props.admin||'');if(destinationAliases[key])return destinationAliases[key];if(europeSet.has(key))return 'Europe';return null;}
-function rowFor(kind,label){return (kind==='origin'?originRows:destinationRows).find(d=>d.label===label);}
+function matchDestination(props){const key=normalize(props.name||props.NAME||props.ADMIN||props.admin||'');if(destinationAliases[key]) return destinationAliases[key];if(europeSet.has(key)) return 'Europe';return null;}
+function rowFor(kind,label){return (kind==='origin'?originRows:destinationRows).find(d=>d.label===label) || null;}
 function coordsFor(kind,label){const row=rowFor(kind,label);return row?[row.lon,row.lat]:hz;}
 function valueFor(kind,label){return kind==='origin'?originValue.get(label):destinationValue.get(label);}
 function fillFor(kind,label){return kind==='origin'?originScale(valueFor(kind,label)):destinationScale(valueFor(kind,label));}
 function labelText(kind,label){return kind==='origin'?properCase(label):label;}
-function activeItem(){return hovered||selected;}
-function countryKindLabel(feature){
+function activeItem(){return selected || hovered || null;}
+function itemForFeature(feature){
   const origin=feature.properties.originLabel;
   const destination=feature.properties.destinationLabel;
-  const active=activeItem();
-  if(active && active.kind==='origin' && origin===active.label) return {kind:'origin',label:origin};
-  if(active && active.kind==='destination' && destination===active.label) return {kind:'destination',label:destination};
+  if(selected && selected.kind==='origin' && origin===selected.label) return {kind:'origin',label:origin};
+  if(selected && selected.kind==='destination' && destination===selected.label) return {kind:'destination',label:destination};
+  if(!selected && hovered && hovered.kind==='origin' && origin===hovered.label) return {kind:'origin',label:origin};
+  if(!selected && hovered && hovered.kind==='destination' && destination===hovered.label) return {kind:'destination',label:destination};
   if(origin) return {kind:'origin',label:origin};
   if(destination) return {kind:'destination',label:destination};
   return null;
 }
-function isFeatureActive(feature){
-  const active=activeItem();
-  if(!active) return false;
-  return (active.kind==='origin' && feature.properties.originLabel===active.label) || (active.kind==='destination' && feature.properties.destinationLabel===active.label);
+function featureFill(feature){const item=itemForFeature(feature);return item?fillFor(item.kind,item.label):'#d7e0dc';}
+function featureOpacity(feature){const item=itemForFeature(feature);if(!item) return 1; if(selected && !(selected.kind===item.kind && selected.label===item.label)) return .6; return item.kind==='destination' && item.label==='Europe' ? .84 : .98;}
+function isFeatureActive(feature){return !!selected && ((selected.kind==='origin' && feature.properties.originLabel===selected.label) || (selected.kind==='destination' && feature.properties.destinationLabel===selected.label)) || (!selected && !!hovered && ((hovered.kind==='origin' && feature.properties.originLabel===hovered.label) || (hovered.kind==='destination' && feature.properties.destinationLabel===hovered.label)));}
+function routeGeo(item){if(!item) return null; const start=item.kind==='origin'?coordsFor(item.kind,item.label):hz; const end=item.kind==='origin'?hz:coordsFor(item.kind,item.label); const interp=d3.geoInterpolate(start,end); return {type:'LineString',coordinates:d3.range(0,1.0001,0.03).map(interp)};}
+function routeColor(item){return item?d3.color(fillFor(item.kind,item.label)).darker(.72).formatHex():'none';}
+function routeEndpoints(item){if(!item) return []; const start=item.kind==='origin'?coordsFor(item.kind,item.label):hz; const end=item.kind==='origin'?hz:coordsFor(item.kind,item.label); return [start,end];}
+function focusParams(kind,label){
+  const target=coordsFor(kind,label);
+  const distanceDeg=d3.geoDistance(hz,target)*180/Math.PI;
+  let focus,zoom;
+  if(kind==='origin'){
+    focus=d3.geoInterpolate(hz,target)(0.5);
+    zoom=1.78;
+  } else if(label==='Europe'){
+    focus=d3.geoInterpolate(hz,target)(0.52);
+    zoom=1.18;
+  } else if(distanceDeg <= 45){
+    focus=d3.geoInterpolate(hz,target)(0.5);
+    zoom=1.35;
+  } else if(distanceDeg <= 90){
+    focus=d3.geoInterpolate(hz,target)(0.48);
+    zoom=1.18;
+  } else {
+    focus=d3.geoInterpolate(hz,target)(0.42);
+    zoom=1.04;
+  }
+  return {rotate:[-focus[0],tilt-focus[1],0],zoom};
 }
-function featureFill(feature){
-  const item=countryKindLabel(feature);
-  return item?fillFor(item.kind,item.label):'#d5ded9';
-}
-function routeGeo(item){
-  if(!item) return null;
-  const start=item.kind==='origin'?coordsFor(item.kind,item.label):hz;
-  const end=item.kind==='origin'?hz:coordsFor(item.kind,item.label);
-  const interp=d3.geoInterpolate(start,end);
-  return {type:'LineString',coordinates:d3.range(0,1.0001,0.025).map(interp)};
-}
-function routeColor(item){return item ? d3.color(fillFor(item.kind,item.label)).darker(.75).formatHex() : 'none';}
 function updateStatus(){
   const item=activeItem();
-  if(!item){status.html('Click a bar below to tour the globe. <em>Drag to rotate.</em>');return;}
-  const value=valueFor(item.kind,item.label);
+  if(!item){status.html('Click a bar or country to focus one route. <em>Drag to rotate.</em>');return;}
   const role=item.kind==='origin'?'origin exporter':'destination market';
-  status.html(`<strong>${labelText(item.kind,item.label)}</strong> · ${role} · ${fmt(value)}M b/d`);
+  status.html(`<strong>${labelText(item.kind,item.label)}</strong> · ${role} · ${fmt(valueFor(item.kind,item.label))}M b/d`);
 }
 function render(){
-  path.projection(projection);
+  projection.translate([width/2,height/2]).scale(baseScale*currentZoom);
   svg.select('.sphere').attr('d',path(sphere));
-  if(countrySel) countrySel.attr('d',path).attr('fill',featureFill).attr('class',d=>`country ${countryKindLabel(d)?'':'country--base'} ${isFeatureActive(d)?'country--active':''}`).attr('opacity',d=>countryKindLabel(d)?.kind==='destination' && countryKindLabel(d)?.label==='Europe' ? .82 : 1);
+  if(countrySel){
+    countrySel
+      .attr('d',path)
+      .attr('fill',featureFill)
+      .attr('opacity',featureOpacity)
+      .attr('class',d=>`country ${itemForFeature(d)?'country--data':'country--base'} ${isFeatureActive(d)?'country--active':''}`);
+  }
+  if(borderSel) borderSel.attr('d',path);
   const item=activeItem();
+  const route=routeGeo(item);
   if(routeSel){
-    const route=routeGeo(item);
-    routeSel.datum(route).attr('d',route?path:null).attr('stroke',routeColor(item)).attr('stroke-width',item?2.2:0).attr('opacity',item?.kind==='origin'?0.92:0.86).attr('marker-end',item?'url(#arrow)':'');
+    routeSel
+      .datum(route)
+      .attr('d',route?path:null)
+      .attr('stroke',routeColor(item))
+      .attr('stroke-width',item?(selected?2.6:2.1):0)
+      .attr('opacity',selected?.kind==='origin'?0.95:0.9)
+      .attr('marker-end',item?'url(#arrow)':'');
     svg.select('#arrow path').attr('fill',routeColor(item));
   }
-  if(dotSel){
-    const p=projection(hz);
-    dotSel.attr('cx',p?p[0]:-100).attr('cy',p?p[1]:-100).attr('r',p?4:0);
+  const endpointData=routeEndpoints(item).map((coords,i)=>({coords,i})).filter(d=>projection(d.coords));
+  if(focusSel){
+    focusSel
+      .data(endpointData)
+      .join('circle')
+      .attr('class','focus-point')
+      .attr('cx',d=>projection(d.coords)[0])
+      .attr('cy',d=>projection(d.coords)[1])
+      .attr('r',d=>d.i===0 && item?.kind==='origin' ? 3.6 : 3.2)
+      .attr('fill',item?routeColor(item):'none')
+      .attr('stroke','#fff')
+      .attr('stroke-width',1.1)
+      .attr('opacity',selected ? 0.96 : 0.84);
   }
   updateStatus();
 }
 function resize(){
   const rect=container.getBoundingClientRect();
-  width=Math.max(320,rect.width);height=Math.max(260,rect.height);
+  width=Math.max(320,rect.width);
+  height=Math.max(260,rect.height);
   svg.attr('viewBox',`0 0 ${width} ${height}`);
-  projection.fitExtent([[14,14],[width-14,height-14]],sphere);
-  baseScale=projection.scale();
+  baseScale=Math.min(width,height)*0.47;
   render();
 }
-function rotateTo(kind,label){
-  const [lon,lat]=coordsFor(kind,label);
-  const from=projection.rotate();
-  const to=[-lon,tilt-lat,0];
-  const iv=Versor.interpolateAngles(from,to);
-  d3.transition().duration(1100).ease(d3.easeCubicInOut).tween('rotate',()=>t=>{projection.rotate(iv(t));render();});
+function animateView(toRotate,toZoom,duration=950){
+  const fromRotate=projection.rotate();
+  const fromZoom=currentZoom;
+  const iv=Versor.interpolateAngles(fromRotate,toRotate);
+  svg.interrupt('focus');
+  svg.transition('focus').duration(duration).ease(d3.easeCubicInOut).tween('view',()=>t=>{
+    projection.rotate(iv(t));
+    currentZoom=fromZoom+(toZoom-fromZoom)*t;
+    render();
+  });
 }
+function focusSelection(kind,label){const cfg=focusParams(kind,label); animateView(cfg.rotate,cfg.zoom,1050);}
+function resetView(announce=false){animateView(defaultRotate,1,900); if(announce) window.parent.postMessage({type:'flow-map-reset'},'*');}
 function selectItem(kind,label,from='map'){
-  selected={kind,label};hovered=null;rotateTo(kind,label);render();
+  selected={kind,label};
+  hovered=null;
+  focusSelection(kind,label);
+  render();
   if(from==='map') window.parent.postMessage({type:'flow-map-select',kind,label},'*');
 }
 function hoverItem(kind,label,from='map'){
-  hovered={kind,label};render();
+  if(selected) return;
+  hovered={kind,label};
+  render();
   if(from==='map') window.parent.postMessage({type:'flow-map-hover',kind,label},'*');
 }
 function clearHover(from='map'){
-  hovered=null;render();
+  if(selected) return;
+  hovered=null;
+  render();
   if(from==='map') window.parent.postMessage({type:'flow-map-hover-clear'},'*');
 }
-function itemFromFeature(feature){
-  const item=countryKindLabel(feature);
-  if(item) return item;
-  return null;
+function clearSelection(from='map'){
+  selected=null;
+  hovered=null;
+  render();
+  resetView(from==='map');
 }
 function setupScene(world){
   const defs=svg.append('defs');
-  defs.append('marker').attr('id','arrow').attr('viewBox','0 -5 10 10').attr('refX',9).attr('refY',0).attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto').append('path').attr('d','M0,-5L10,0L0,5');
+  defs.append('marker').attr('id','arrow').attr('viewBox','0 -5 10 10').attr('refX',8.6).attr('refY',0).attr('markerWidth',5.2).attr('markerHeight',5.2).attr('orient','auto').append('path').attr('d','M0,-5L10,0L0,5');
   svg.append('path').attr('class','sphere');
   countries=topojson.feature(world,world.objects.countries).features;
   countries.forEach(f=>{f.properties.originLabel=matchOrigin(f.properties);f.properties.destinationLabel=matchDestination(f.properties);});
   borders=topojson.mesh(world,world.objects.countries,(a,b)=>a!==b);
-  countrySel=svg.append('g').selectAll('path').data(countries).join('path').attr('class','country').on('mouseenter',(ev,d)=>{const item=itemFromFeature(d); if(item) hoverItem(item.kind,item.label,'map');}).on('mouseleave',()=>clearHover('map')).on('click',(ev,d)=>{const item=itemFromFeature(d); if(item) selectItem(item.kind,item.label,'map');});
-  svg.append('path').datum(borders).attr('fill','none').attr('stroke','#fff').attr('stroke-width','.45').attr('pointer-events','none');
+  countrySel=svg.append('g').selectAll('path').data(countries).join('path').on('mouseenter',(ev,d)=>{const origin=d.properties.originLabel,destination=d.properties.destinationLabel;if(selected) return; if(origin) hoverItem('origin',origin,'map'); else if(destination) hoverItem('destination',destination,'map');}).on('mouseleave',()=>clearHover('map')).on('click',(ev,d)=>{const origin=d.properties.originLabel,destination=d.properties.destinationLabel;if(selected && ((selected.kind==='origin'&&origin===selected.label)||(selected.kind==='destination'&&destination===selected.label))) return; if(origin && (!selected || selected.kind==='origin')) selectItem('origin',origin,'map'); else if(destination) selectItem('destination',destination,'map');});
+  borderSel=svg.append('path').datum(borders).attr('fill','none').attr('stroke','#fff').attr('stroke-width','.45').attr('pointer-events','none');
   routeSel=svg.append('path').attr('class','route');
-  dotSel=svg.append('circle').attr('class','hormuz-dot').on('click',()=>{selected=null;hovered=null;rotateTo('destination','Saudi Arabia');render();});
-  svg.call(d3.drag().on('start',()=>container.classList.add('is-dragging')).on('drag',event=>{const r=projection.rotate();projection.rotate([r[0]+event.dx*.35,r[1]-event.dy*.35,r[2]]);render();}).on('end',()=>container.classList.remove('is-dragging')));
-  svg.call(d3.zoom().scaleExtent([.82,1.55]).on('zoom',event=>{projection.scale(baseScale*event.transform.k);render();}));
+  focusSel=svg.append('g');
+  svg.call(d3.drag().on('start',()=>container.classList.add('is-dragging')).on('drag',event=>{svg.interrupt('focus'); const r=projection.rotate(); projection.rotate([r[0]+event.dx*.34,r[1]-event.dy*.34,r[2]]); render();}).on('end',()=>container.classList.remove('is-dragging')));
+  zoomBehavior=d3.zoom().scaleExtent([0.88,1.7]).on('zoom',event=>{svg.interrupt('focus'); currentZoom=event.transform.k; render();});
+  svg.call(zoomBehavior).call(zoomBehavior.transform,d3.zoomIdentity.scale(1));
   resize();
 }
 
@@ -155,19 +232,21 @@ Promise.all([
   d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
 ]).then(([origins,destinations,world])=>{
   originRows=origins.filter(d=>!d.is_aggregate).sort((a,b)=>b.mbd_2024-a.mbd_2024);
-  destinationRows=destinations.filter(d=>d.label==='Europe' || !d.is_aggregate).sort((a,b)=>b.mbd_2024-a.mbd_2024);
+  destinationRows=destinations.filter(d=>!d.is_aggregate && d.label!=='Saudi Arabia' || d.label==='Europe').sort((a,b)=>b.mbd_2024-a.mbd_2024);
   originValue=new Map(originRows.map(d=>[d.label,d.mbd_2024]));
   destinationValue=new Map(destinationRows.map(d=>[d.label,d.mbd_2024]));
   originScale=d3.scaleSequential().domain(d3.extent(originRows,d=>d.mbd_2024)).interpolator(t=>d3.interpolateRgb('#f5d1bd','#c66132')(t));
   destinationScale=d3.scaleSequential().domain(d3.extent(destinationRows,d=>d.mbd_2024)).interpolator(t=>d3.interpolateRgb('#d9f1e4','#0f8f63')(t));
   setupScene(world);
 });
+
+resetBtn.addEventListener('click',()=>clearSelection('map'));
 window.addEventListener('resize',resize);
 window.addEventListener('message',e=>{
   if(e.data?.type==='flow-select') selectItem(e.data.kind,e.data.label,'parent');
-  if(e.data?.type==='flow-clear-selection'){selected=null;hovered=null;projection.rotate([-hz[0],tilt-hz[1],0]);render();}
+  if(e.data?.type==='flow-clear-selection') clearSelection('parent');
   if(e.data?.type==='flow-hover') hoverItem(e.data.kind,e.data.label,'parent');
-  if(e.data?.type==='flow-clear-hover') clearHover('parent');
+  if(e.data?.type==='flow-clear-hover') {hovered=null; render();}
 });
 </script>
 </body></html>

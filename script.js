@@ -74,6 +74,7 @@ Promise.all([
     if(e.data?.type==='flow-map-select') setFlowSelection(e.data.kind,e.data.label,true);
     if(e.data?.type==='flow-map-hover') setFlowHover(e.data.kind,e.data.label,true);
     if(e.data?.type==='flow-map-hover-clear') setFlowHover(null,null,true);
+    if(e.data?.type==='flow-map-reset') setFlowSelection(null,null,true);
   });
 });
 
@@ -91,16 +92,18 @@ function flowIframePost(message){
 }
 function setFlowSelection(kind,label,fromMap=false){
   st.flowSelection=(kind&&label)?{kind,label}:null;
+  st.flowHover=null;
   renderFlowBars(window.__DATA__.origins,window.__DATA__.destinations);
   if(!fromMap){
     if(st.flowSelection) flowIframePost({type:'flow-select',kind,label});
     else flowIframePost({type:'flow-clear-selection'});
+    flowIframePost({type:'flow-clear-hover'});
   }
 }
 function setFlowHover(kind,label,fromMap=false){
   st.flowHover=(kind&&label)?{kind,label}:null;
   renderFlowBars(window.__DATA__.origins,window.__DATA__.destinations);
-  if(!fromMap){
+  if(!fromMap && !st.flowSelection){
     if(st.flowHover) flowIframePost({type:'flow-hover',kind,label});
     else flowIframePost({type:'flow-clear-hover'});
   }
@@ -365,7 +368,7 @@ function renderBA(ba){
 }
 
 function renderFlowBars(origins,destinations){
-  const destinationRows=destinations.filter(d=>!d.is_aggregate || d.label==='Europe').sort((a,b)=>d3.descending(a.mbd_2024,b.mbd_2024));
+  const destinationRows=destinations.filter(d=>(!d.is_aggregate && d.label!=='Saudi Arabia') || d.label==='Europe').sort((a,b)=>d3.descending(a.mbd_2024,b.mbd_2024));
   const originRows=origins.filter(d=>!d.is_aggregate).sort((a,b)=>d3.descending(a.mbd_2024,b.mbd_2024));
   const destinationScale=d3.scaleSequential().domain(d3.extent(destinationRows,d=>d.mbd_2024)).interpolator(t=>d3.interpolateRgb('#d9f1e4','#0f8f63')(t));
   const originScale=d3.scaleSequential().domain(d3.extent(originRows,d=>d.mbd_2024)).interpolator(t=>d3.interpolateRgb('#f5d1bd','#c66132')(t));
@@ -373,13 +376,17 @@ function renderFlowBars(origins,destinations){
   renderFlowBar('#origin-chart',originRows,'origin',originScale);
   const asia=destinations.filter(d=>['China','India','South Korea','Japan'].includes(d.label));
   const asiaShare=d3.sum(asia,d=>d.mbd_2024)/d3.sum(destinationRows,d=>d.mbd_2024);
-  d3.select('#destination-read').text(`Destination markets are shaded by 2024 flow volume. ${fmt.pct(asiaShare)} of the named destination markets shown here are in Asia; Europe is included as a grouped destination from the source figure. Source: U.S. EIA figure data based on Vortexa.`);
+  d3.select('#destination-read').text(`Destination markets are shaded by 2024 flow volume. ${fmt.pct(asiaShare)} of the named destination markets shown here are in Asia; Europe is included as a grouped destination from the source figure. Click a bar to focus the route on the globe. Source: U.S. EIA figure data based on Vortexa.`);
   const topOrigin=originRows[0];
-  d3.select('#origin-read').text(`Origin exporters are also shaded by 2024 flow volume. ${topOrigin.label} is the largest named origin in the EIA figure data, at ${fmt.mbd(topOrigin.mbd_2024)} in 2024. Source: U.S. EIA figure data based on Vortexa.`);
+  d3.select('#origin-read').text(`Origin exporters are also shaded by 2024 flow volume. ${topOrigin.label} is the largest named origin in the EIA figure data, at ${fmt.mbd(topOrigin.mbd_2024)} in 2024. Click a bar to focus the route on the globe. Source: U.S. EIA figure data based on Vortexa.`);
   if(st.flowSelection) flowIframePost({type:'flow-select',kind:st.flowSelection.kind,label:st.flowSelection.label});
   else flowIframePost({type:'flow-clear-selection'});
-  if(st.flowHover) flowIframePost({type:'flow-hover',kind:st.flowHover.kind,label:st.flowHover.label});
-  else flowIframePost({type:'flow-clear-hover'});
+  if(!st.flowSelection){
+    if(st.flowHover) flowIframePost({type:'flow-hover',kind:st.flowHover.kind,label:st.flowHover.label});
+    else flowIframePost({type:'flow-clear-hover'});
+  } else {
+    flowIframePost({type:'flow-clear-hover'});
+  }
 }
 function renderFlowBar(sel,rows,kind,colorScale){
   const svg=d3.select(sel),{W,H}=cS(svg,290);
