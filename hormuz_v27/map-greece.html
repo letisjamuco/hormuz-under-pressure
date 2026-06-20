@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#eef4f1}#map{width:100%;height:100%;background:#eaf4f2}
+.legend{position:absolute;left:12px;bottom:12px;z-index:500;background:rgba(255,255,255,.94);border:1px solid rgba(14,74,66,.14);border-radius:12px;padding:8px 10px;font:11px/1.35 'Space Mono',monospace;color:#1e5a51;box-shadow:0 10px 24px -18px rgba(8,44,40,.45)}
+.legend strong{display:block;color:#082c28;margin-bottom:4px}.sw{display:inline-block;width:17px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.nomos-tip{font:12px/1.35 'Crimson Pro',serif;color:#082c28}.nomos-tip strong{display:block;font:700 11px/1.2 'Space Mono',monospace;color:#0f4d46;margin-bottom:2px}
+.leaflet-interactive:focus{outline:none!important}.leaflet-container path:focus{outline:none!important}.leaflet-interactive{cursor:pointer}
+</style>
+</head><body>
+<div id="map"></div>
+<div class="legend" id="legend"><strong id="legend-title">A95 latest €/L</strong><div id="legend-scale"></div><div>Relative scale · hover preview · click lock</div></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,attributionControl:false,minZoom:5,maxZoom:11,worldCopyJump:false}).setView([38.5,24.0],6);
+// No raster basemap here: the layer intentionally shows only Greek prefecture geometry,
+// avoiding neighbouring-country labels and repeated world tiles during zoom-out.
+const geoUrl='https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/greece-prefectures.geojson';
+const activeStroke='#008c8c', defaultStroke='rgba(8,44,40,.55)';
+const f=d3.format(',.3f'), fp=d3.format('+.0%');
+const fuelLabels={a95:'A95',a100:'A100',diesel_kinisis:'Diesel',diesel_thermansis:'Heating diesel',lpg:'LPG'};
+const fuelFiles={
+  a95:'data/processed/greece_a95_by_nomos.csv',
+  a100:'data/processed/greece_a100_by_nomos.csv',
+  diesel_kinisis:'data/processed/greece_diesel_by_nomos.csv',
+  diesel_thermansis:'data/processed/greece_heating_by_nomos.csv',
+  lpg:'data/processed/greece_lpg_by_nomos.csv'
+};
+let rawDatasets={}, datasets={}, currentFuel='a95', currentMode='price', centroidRows=[], geoLayer=null, color, values=[], lockedNomos=null;
+const layersByNomos=new Map();
+const fallbackCandidates=new Map();
+function short(n){return (n||'').replace(/^ΝΟΜΟΣ\s+/,'').trim();}
+function latinKey(s){let k=(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z]/g,''); return k.replace(/^nomos/,'').replace(/^prefectureof/,'').replace(/^prefecture/,'');}
+function greekKey(s){return (s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/^ΝΟΜΟΣ\s+/,'').replace(/[^Α-ΩA-Z]/g,'');}
+Promise.all([
+  d3.csv(fuelFiles.a95), d3.csv(fuelFiles.a100), d3.csv(fuelFiles.diesel_kinisis), d3.csv(fuelFiles.diesel_thermansis), d3.csv(fuelFiles.lpg),
+  d3.csv('data/processed/greece_nomos_centroids.csv',d=>({...d,lat:+d.lat,lon:+d.lon}))
+]).then(([a95,a100,diesel,heating,lpg,centroids])=>{
+  rawDatasets={a95,a100,diesel_kinisis:diesel,diesel_thermansis:heating,lpg};
+  centroidRows=centroids;
+  Object.keys(rawDatasets).forEach(k=>datasets[k]=makeDataset(rawDatasets[k]));
+  setScale(); renderLegend();
+  fetch(geoUrl).then(r=>r.json()).then(geo=>addGeojson(geo)).catch(()=>addCentroidOnlyMap());
+});
+function makeDataset(rows){
+  const cols=Object.keys(rows[0]).filter(k=>k!=='nomos');
+  const last=[...cols].reverse().find(c=>rows.some(d=>Number.isFinite(+d[c]) && +d[c]>0)) || cols[cols.length-1];
+  const before=[...cols].reverse().find(c=>c<'2026-03-01' && rows.some(d=>Number.isFinite(+d[c]) && +d[c]>0));
+  const map=new Map();
+  rows.forEach(d=>{ const price=+d[last]; const base=before?(+d[before]||null):null; if(Number.isFinite(price)&&price>0) map.set(d.nomos,{price,before:base,delta:base?price/base-1:null}); });
+  map.lastCol=last; map.beforeCol=before; return map;
+}
+function metricFor(nomos){ const row=datasets[currentFuel].get(nomos); if(!row) return null; return currentMode==='price'?row.price:row.delta; }
+function setScale(){ values=[...datasets[currentFuel].keys()].map(metricFor).filter(v=>Number.isFinite(v)); color=d3.scaleSequential().domain([d3.min(values),d3.max(values)]).interpolator(d3.interpolateRgbBasis(['#fff3bf','#f5c267','#e79c49','#b25d33'])); }
+function metricLabel(v){ return currentMode==='price'?f(v):fp(v); }
+function renderLegend(){ const min=d3.min(values),max=d3.max(values),mid=(min+max)/2; document.getElementById('legend-title').textContent=`${fuelLabels[currentFuel]} ${currentMode==='price'?'latest €/L':'change since HORMUZ-26'}`; d3.select('#legend-scale').html([min,mid,max].map(v=>`<span class="sw" style="background:${color(v)}"></span>${metricLabel(v)}`).join('<br>')); }
+function featurePoint(feature){ const c=d3.geoCentroid(feature); return {lon:c[0],lat:c[1]}; }
+function isAtticaIslandOrIslandUnit(feature){
+  // Spatial matching was too risky: it captured neighbouring mainland polygons
+  // such as Argolida as Attica. Keep Attica assignment name-based only.
+  return false;
+}
+function isAtticaNameGreekOrLatin(lk,gk,raw){
+  const r=(raw||'').toString().toLowerCase();
+  // Do NOT match generic words like "islands" / "nison" here. Those caused
+  // false positives, especially Sporades / Magnesia. Use only explicit Attica
+  // mainland names and specific Attica islands.
+  if(['attica','attiki','athens','athina','athinaion','piraeus','peiraias','pireas','eastattica','anatolikiattiki','westattica','ditikiattiki','westernattica','easternattica','saronic','saronicislands','salamin','salamina','salamis','aegina','aigina','agistri','poros','hydra','ydra','spetses','spetsai','kythira','kithira','cythera','antikythira','troizinia','troezen','methana'].some(k=>lk.includes(k))) return true;
+  if(['ΑΤΤΙΚ','ΑΘΗΝ','ΠΕΙΡΑΙ','ΠΕΙΡΑ','ΣΑΡΩΝ','ΣΑΛΑΜΙΝ','ΑΙΓΙΝ','ΑΓΚΙΣΤΡ','ΠΟΡΟΣ','ΠΟΡΟΥ','ΥΔΡΑ','ΣΠΕΤΣ','ΚΥΘΗΡ','ΑΝΤΙΚΥΘΗΡ','ΤΡΟΙΖΗΝ','ΜΕΘΑΝ'].some(k=>gk.includes(k))) return true;
+  if(/attic|athen|pirae|saronic|salamin|aegin|agistri|hydra|spets|kythir|cyther|troezen|methana/.test(r)) return true;
+  return false;
+}
+function nearestNomos(feature){ const c=featurePoint(feature); let best=null,bestD=Infinity; centroidRows.forEach(d=>{ const dx=c.lon-d.lon, dy=c.lat-d.lat; const dist=dx*dx+dy*dy; if(dist<bestD){bestD=dist; best=d.nomos;} }); return best; }
+function matchInfo(feature){
+  const props=feature.properties||{};
+  const raw=props.name||props.NAME||props.Name||props.NOMOS||props.prefecture||props.PREFECTURE||props.NAME_1||props.name_en||props.title||'';
+  const lk=latinKey(raw), gk=greekKey(raw);
+  // Priority corrections before any Attica matching. These prevent Saronic/Peloponnese
+  // neighbouring prefectures from being absorbed into Attica.
+  if(/argol|argolis|argolida/.test(lk) || gk.includes('ΑΡΓΟΛ')) return {nomos:'ΝΟΜΟΣ ΑΡΓΟΛΙΔΟΣ',strength:4,raw};
+  if(/magnes|magnis|sporad/.test(lk) || gk.includes('ΜΑΓΝΗΣ') || gk.includes('ΣΠΟΡΑΔ')) return {nomos:'ΝΟΜΟΣ ΜΑΓΝΗΣΙΑΣ',strength:4,raw};
+  if(/lakon|lacon/.test(lk) || gk.includes('ΛΑΚΩΝ')) return {nomos:'ΝΟΜΟΣ ΛΑΚΩΝΙΑΣ',strength:4,raw};
+  if(/messin|messen/.test(lk) || gk.includes('ΜΕΣΣΗΝ')) return {nomos:'ΝΟΜΟΣ ΜΕΣΣΗΝΙΑΣ',strength:4,raw};
+  if(isAtticaNameGreekOrLatin(lk,gk,raw)) return {nomos:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',strength:4,raw};
+  const exact=centroidRows.find(d=>latinKey(d.english)===lk || greekKey(d.nomos)===gk);
+  if(exact) return {nomos:exact.nomos,strength:3,raw};
+  const aliases={
+    aetoliaacarnania:'ΝΟΜΟΣ ΑΙΤΩΛΙΑΣ ΚΑΙ ΑΚΑΡΝΑΝΙΑΣ',etoliaakarnania:'ΝΟΜΟΣ ΑΙΤΩΛΙΑΣ ΚΑΙ ΑΚΑΡΝΑΝΙΑΣ',aitoloakarnania:'ΝΟΜΟΣ ΑΙΤΩΛΙΑΣ ΚΑΙ ΑΚΑΡΝΑΝΙΑΣ',
+    achaia:'ΝΟΜΟΣ ΑΧΑΪΑΣ',achaea:'ΝΟΜΟΣ ΑΧΑΪΑΣ',ahaias:'ΝΟΜΟΣ ΑΧΑΪΑΣ',argolis:'ΝΟΜΟΣ ΑΡΓΟΛΙΔΟΣ',argolida:'ΝΟΜΟΣ ΑΡΓΟΛΙΔΟΣ',arkadia:'ΝΟΜΟΣ ΑΡΚΑΔΙΑΣ',arcadia:'ΝΟΜΟΣ ΑΡΚΑΔΙΑΣ',
+    boiotia:'ΝΟΜΟΣ ΒΟΙΩΤΙΑΣ',boeotia:'ΝΟΜΟΣ ΒΟΙΩΤΙΑΣ',evia:'ΝΟΜΟΣ ΕΥΒΟΙΑΣ',euboea:'ΝΟΜΟΣ ΕΥΒΟΙΑΣ',evrytania:'ΝΟΜΟΣ ΕΥΡΥΤΑΝΙΑΣ',
+    dodekanisa:'ΝΟΜΟΣ ΔΩΔΕΚΑΝΗΣΟΥ',dodecanese:'ΝΟΜΟΣ ΔΩΔΕΚΑΝΗΣΟΥ',kerkyra:'ΝΟΜΟΣ ΚΕΡΚΥΡΑΣ',corfu:'ΝΟΜΟΣ ΚΕΡΚΥΡΑΣ',kefallinia:'ΝΟΜΟΣ ΚΕΦΑΛΛΗΝΙΑΣ',kefalonia:'ΝΟΜΟΣ ΚΕΦΑΛΛΗΝΙΑΣ',cephalonia:'ΝΟΜΟΣ ΚΕΦΑΛΛΗΝΙΑΣ',
+    attica:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',attiki:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',athens:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',athina:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',athinaion:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',piraeus:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',peiraias:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',pireas:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',eastattica:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',anatolikiattiki:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',westattica:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',ditikiattiki:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',westernattica:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',easternattica:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',
+    salamina:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',salamina:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',salamis:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',aegina:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',aigina:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',agistri:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',poros:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',hydra:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',ydra:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',spetses:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',spetsai:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',kythira:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',kithira:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',cythera:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',antikythira:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',troizinia:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',troezen:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',methana:'ΝΟΜΟΣ ΑΤΤΙΚΗΣ',
+    cyclades:'ΝΟΜΟΣ ΚΥΚΛΑΔΩΝ',kyklades:'ΝΟΜΟΣ ΚΥΚΛΑΔΩΝ',lesbos:'ΝΟΜΟΣ ΛΕΣΒΟΥ',lesvos:'ΝΟΜΟΣ ΛΕΣΒΟΥ',
+    phthiotis:'ΝΟΜΟΣ ΦΘΙΩΤΙΔΟΣ',fthiotida:'ΝΟΜΟΣ ΦΘΙΩΤΙΔΟΣ',phocis:'ΝΟΜΟΣ ΦΩΚΙΔΟΣ',fokida:'ΝΟΜΟΣ ΦΩΚΙΔΟΣ',
+    chalkidiki:'ΝΟΜΟΣ ΧΑΛΚΙΔΙΚΗΣ',chalcidice:'ΝΟΜΟΣ ΧΑΛΚΙΔΙΚΗΣ',chios:'ΝΟΜΟΣ ΧΙΟΥ',
+    elis:'ΝΟΜΟΣ ΗΛΕΙΑΣ',ileia:'ΝΟΜΟΣ ΗΛΕΙΑΣ',heraklion:'ΝΟΜΟΣ ΗΡΑΚΛΕΙΟΥ',irakleio:'ΝΟΜΟΣ ΗΡΑΚΛΕΙΟΥ',ioannina:'ΝΟΜΟΣ ΙΩΑΝΝΙΝΩΝ',pieria:'ΝΟΜΟΣ ΠΙΕΡΙΑΣ',
+    magnisia:'ΝΟΜΟΣ ΜΑΓΝΗΣΙΑΣ',magnesia:'ΝΟΜΟΣ ΜΑΓΝΗΣΙΑΣ',magnesias:'ΝΟΜΟΣ ΜΑΓΝΗΣΙΑΣ',magnisias:'ΝΟΜΟΣ ΜΑΓΝΗΣΙΑΣ',korinthia:'ΝΟΜΟΣ ΚΟΡΙΝΘΙΑΣ',corinthia:'ΝΟΜΟΣ ΚΟΡΙΝΘΙΑΣ',xanthi:'ΝΟΜΟΣ ΞΑΝΘΗΣ',rodopi:'ΝΟΜΟΣ ΡΟΔΟΠΗΣ',serres:'ΝΟΜΟΣ ΣΕΡΡΩΝ',trikala:'ΝΟΜΟΣ ΤΡΙΚΑΛΩΝ',
+    lakonia:'ΝΟΜΟΣ ΛΑΚΩΝΙΑΣ',lakonias:'ΝΟΜΟΣ ΛΑΚΩΝΙΑΣ',laconia:'ΝΟΜΟΣ ΛΑΚΩΝΙΑΣ',
+    messinia:'ΝΟΜΟΣ ΜΕΣΣΗΝΙΑΣ',messinias:'ΝΟΜΟΣ ΜΕΣΣΗΝΙΑΣ',messenia:'ΝΟΜΟΣ ΜΕΣΣΗΝΙΑΣ',messenias:'ΝΟΜΟΣ ΜΕΣΣΗΝΙΑΣ',
+    florina:'ΝΟΜΟΣ ΦΛΩΡΙΝΗΣ',preveza:'ΝΟΜΟΣ ΠΡΕΒΕΖΗΣ',evros:'ΝΟΜΟΣ ΕΒΡΟΥ',samos:'ΝΟΜΟΣ ΣΑΜΟΥ',lasithi:'ΝΟΜΟΣ ΛΑΣΙΘΙΟΥ',lasithiou:'ΝΟΜΟΣ ΛΑΣΙΘΙΟΥ',kavala:'ΝΟΜΟΣ ΚΑΒΑΛΑΣ',kavalas:'ΝΟΜΟΣ ΚΑΒΑΛΑΣ',arta:'ΝΟΜΟΣ ΑΡΤΗΣ',artas:'ΝΟΜΟΣ ΑΡΤΗΣ'
+  };
+  if(aliases[lk]) return {nomos:aliases[lk],strength:2,raw};
+  if(lk.includes('sporades') || lk.includes('sporada') || gk.includes('ΣΠΟΡΑΔ') || gk.includes('ΜΑΓΝΗΣ')) return {nomos:'ΝΟΜΟΣ ΜΑΓΝΗΣΙΑΣ',strength:2,raw};
+  const contains=centroidRows.find(d=>{
+    const en=latinKey(d.english), gr=greekKey(d.nomos);
+    return (lk && en && (lk.includes(en)||en.includes(lk))) || (gk && gr && (gk.includes(gr)||gr.includes(gk)));
+  });
+  if(contains) return {nomos:contains.nomos,strength:1,raw};
+  return {nomos:nearestNomos(feature),strength:0,raw};
+}
+function popupHtml(nomos){ const row=datasets[currentFuel].get(nomos); const beforeCol=datasets[currentFuel].beforeCol||'2026-02-28'; if(!row) return `<strong>${short(nomos)}</strong><br>No data`; return `<strong>${short(nomos)}</strong><br>${fuelLabels[currentFuel]} latest: ${f(row.price)} €/L<br>Before HORMUZ-26, ${beforeCol}: ${row.before!==null&&row.before!==undefined?f(row.before):'-'} €/L<br>Change since then: ${row.delta!==null?fp(row.delta):'-'}`; }
+function styleFor(nomos,active=false){ const v=metricFor(nomos); return {color:active?activeStroke:defaultStroke,weight:active?3.4:.75,fillColor:Number.isFinite(v)?color(v):'#eef3ef',fillOpacity:active?1:.88}; }
+function bindNomosInteractions(layer, nomos){ layer.on('mouseover',()=>previewNomos(nomos,true)); layer.on('mouseout',()=>previewNomos(nomos,false)); layer.on('click',()=>selectNomos(nomos,true)); }
+function addLayerForNomos(nomos,layer){ if(!layersByNomos.has(nomos)) layersByNomos.set(nomos,[]); layersByNomos.get(nomos).push(layer); }
+function addFallbackCandidate(nomos,layer){ if(!fallbackCandidates.has(nomos)) fallbackCandidates.set(nomos,[]); fallbackCandidates.get(nomos).push(layer); }
+function addGeojson(geo){
+  geoLayer=L.geoJSON(geo,{
+    style:feature=>styleFor(matchInfo(feature).nomos,false),
+    onEachFeature:(feature,layer)=>{
+      const info=matchInfo(feature), nomos=info.nomos;
+      if(!nomos) return;
+      layer._nomos=nomos; layer._matchStrength=info.strength;
+      if(info.strength>0) addLayerForNomos(nomos,layer); else addFallbackCandidate(nomos,layer);
+      layer.bindTooltip(popupHtml(nomos),{sticky:true,direction:'top',opacity:.96,className:'nomos-tip'});
+      bindNomosInteractions(layer,nomos);
+      layer.on('click',()=>{ const el=layer.getElement&&layer.getElement(); if(el) el.blur&&el.blur(); });
+    }
+  }).addTo(map);
+  // Use fallback polygons only for prefectures that have no named polygon at all. This keeps Attica as all its named pieces, not a nearest wrong polygon.
+  datasets[currentFuel].forEach((_,nomos)=>{ if(!layersByNomos.has(nomos) && fallbackCandidates.has(nomos)){ fallbackCandidates.get(nomos).forEach(layer=>addLayerForNomos(nomos,layer)); } });
+  map.fitBounds(geoLayer.getBounds(),{padding:[10,10]});
+}
+function addCentroidOnlyMap(){ centroidRows.forEach(d=>{ const v=metricFor(d.nomos); const marker=L.circleMarker([d.lat,d.lon],{radius:7,color:defaultStroke,weight:1,fillColor:Number.isFinite(v)?color(v):'#eef3ef',fillOpacity:.9}).addTo(map); marker.bindTooltip(popupHtml(d.nomos),{sticky:true,direction:'top',opacity:.96,className:'nomos-tip'}); bindNomosInteractions(marker,d.nomos); addLayerForNomos(d.nomos,marker); }); }
+function eachNomosLayer(cb){ layersByNomos.forEach((layers,nomos)=>layers.forEach(layer=>cb(layer,nomos))); }
+function refreshMap(){ setScale(); renderLegend(); eachNomosLayer((layer,nomos)=>{ if(layer.setTooltipContent) layer.setTooltipContent(popupHtml(nomos)); layer.setStyle(styleFor(nomos,lockedNomos===nomos)); }); }
+function setStyles(activeNomos){ eachNomosLayer((layer,nomos)=>{ layer.setStyle(styleFor(nomos,nomos===activeNomos)); }); }
+function previewNomos(nomos,on){ setStyles(on?nomos:lockedNomos); }
+function selectNomos(nomos,post){
+  lockedNomos=nomos;
+  setStyles(nomos);
+  const layers=layersByNomos.get(nomos)||[];
+  if(layers.length){
+    const group=L.featureGroup(layers);
+    if(group.getBounds().isValid()) map.fitBounds(group.getBounds(),{padding:[18,18],maxZoom:8});
+    const el=layers[0].getElement&&layers[0].getElement(); if(el) el.blur&&el.blur();
+  }
+  if(post) window.parent.postMessage({type:'nomos-click',nomos},'*');
+}
+window.addEventListener('message',ev=>{ if(ev.data&&ev.data.type==='highlight-nomos') selectNomos(ev.data.nomos,false); if(ev.data&&ev.data.type==='fuel-change'){ currentFuel=ev.data.fuel||'a95'; refreshMap(); } if(ev.data&&ev.data.type==='mode-change'){ currentMode=ev.data.mode||'price'; refreshMap(); } });
+</script>
+</body></html>

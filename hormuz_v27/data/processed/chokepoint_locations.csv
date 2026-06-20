@@ -1,0 +1,29 @@
+portid,portname,lat,lon
+chokepoint1,Suez Canal,30.43,32.35
+chokepoint2,Panama Canal,9.08,-79.68
+chokepoint3,Bosporus Strait,41.12,29.05
+chokepoint4,Bab el-Mandeb Strait,12.58,43.33
+chokepoint5,Malacca Strait,2.5,101.2
+chokepoint6,Strait of Hormuz,26.35,56.65
+chokepoint7,Cape of Good Hope,-34.36,18.47
+chokepoint8,Gibraltar Strait,35.97,-5.5
+chokepoint9,Dover Strait,51.05,1.4
+chokepoint10,Oresund Strait,55.95,12.68
+chokepoint11,Taiwan Strait,24.25,119.2
+chokepoint12,Korea Strait,34.0,129.0
+chokepoint13,Tsugaru Strait,41.55,140.5
+chokepoint14,Luzon Strait,19.5,121.0
+chokepoint15,Lombok Strait,-8.4,115.7
+chokepoint16,Ombai Strait,-8.5,125.0
+chokepoint17,Bohai Strait,37.9,120.8
+chokepoint18,Torres Strait,-10.58,142.22
+chokepoint19,Sunda Strait,-6.1,105.9
+chokepoint20,Makassar Strait,-2.0,118.0
+chokepoint21,Magellan Strait,-53.5,-70.8
+chokepoint22,Yucatan Channel,21.5,-86.5
+chokepoint23,Windward Passage,19.8,-73.6
+chokepoint24,Mona Passage,18.3,-67.9
+chokepoint25,Balabac Strait,7.6,117.0
+chokepoint26,Bering Strait,65.76,-168.9
+chokepoint27,Mindoro Strait,12.5,120.7
+chokepoint28,Kerch Strait,45.3,36.6

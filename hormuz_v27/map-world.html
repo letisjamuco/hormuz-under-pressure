@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+html,body{margin:0;padding:0;height:100%;overflow:hidden}#map{width:100%;height:100%}.choke-tooltip{font-family:'Space Mono',monospace;font-size:11px}.choke-tooltip strong{display:block;margin-bottom:2px}
+</style>
+</head><body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+const worldBounds=[[-85,-180],[85,180]];
+const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,minZoom:1,worldCopyJump:false}).setView([20,40],2);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:10,noWrap:true,bounds:worldBounds,attribution:'© OSM'}).addTo(map);
+const markers={}, positions={}, summaryById=new Map();
+let currentMetric='avg_tanker', currentSelected=null, currentPeriod='Before HORMUZ-26';
+Promise.all([
+  d3.csv('data/processed/chokepoint_locations.csv',d=>({...d,lat:+d.lat,lon:+d.lon})),
+  d3.csv('data/processed/chokepoints_daily.csv',d=>({...d,date:new Date(d.date),n_total:+d.n_total,n_tanker:+d.n_tanker,capacity:+d.capacity}))
+]).then(([locs,rows])=>{
+  rebuildSummary(rows);
+  locs.forEach(loc=>{
+    const m=L.circleMarker([loc.lat,loc.lon], styleFor(loc.portid)).addTo(map);
+    markers[loc.portid]=m; positions[loc.portid]=[loc.lat,loc.lon];
+    updatePopup(loc.portid,loc.portname);
+    m.on('click',()=>selectChokepoint(loc.portid,true));
+  });
+});
+function rebuildSummary(rows){
+  summaryById.clear();
+  const start=currentPeriod==='Before HORMUZ-26'?new Date('2026-01-01'):new Date('2026-03-01');
+  const end=currentPeriod==='Before HORMUZ-26'?new Date('2026-02-28'):new Date('2026-05-17');
+  const filtered=rows.filter(d=>d.date>=start&&d.date<=end);
+  d3.groups(filtered,d=>d.portid,d=>d.portname).forEach(([portid,byName])=>{
+    const portname=byName[0][0];
+    const arr=byName.flatMap(d=>d[1]);
+    const avg_total=d3.mean(arr,d=>d.n_total)||0;
+    const avg_tanker=d3.mean(arr,d=>d.n_tanker)||0;
+    const avg_capacity=d3.mean(arr,d=>d.capacity)||0;
+    const tanker_share=avg_total?avg_tanker/avg_total:0;
+    summaryById.set(portid,{portid,portname,avg_total,avg_tanker,avg_capacity,tanker_share});
+  });
+}
+function metricValue(pid){ const s=summaryById.get(pid)||{}; return currentMetric==='tanker_share'?(+s.tanker_share||0):(+s.avg_tanker||0); }
+function styleFor(pid){
+  const vals=[...summaryById.values()].map(d=>currentMetric==='tanker_share'?d.tanker_share:d.avg_tanker).filter(v=>Number.isFinite(v));
+  const max=d3.max(vals)||1, val=metricValue(pid), isH=pid==='chokepoint6';
+  const radius=Math.max(isH?5:4, Math.sqrt(Math.max(val,0)/max)*24);
+  return {radius,color:isH?'#d36a38':'#0f4d46',fillColor:isH?'#d36a38':'#74b8a7',fillOpacity:isH?.65:.35,weight:isH?2.5:1};
+}
+function updatePopup(pid,name){
+  const s=summaryById.get(pid)||{};
+  markers[pid].bindPopup('<div class="choke-tooltip"><strong>'+name+'</strong>'+
+    currentPeriod+'<br>'+
+    'Tankers/day: '+(Number.isFinite(s.avg_tanker)?(+s.avg_tanker).toFixed(1):'-')+'<br>'+
+    'Tankers as % of traffic: '+(Number.isFinite(s.tanker_share)?Math.round(+s.tanker_share*100)+'%':'-')+'<br>'+
+    'All ships/day: '+(Number.isFinite(s.avg_total)?(+s.avg_total).toFixed(1):'-')+'</div>');
+}
+function refreshMetric(){ Object.keys(markers).forEach(pid=>{markers[pid].setStyle(styleFor(pid)); updatePopup(pid, summaryById.get(pid)?.portname || pid);}); if(currentSelected) selectChokepoint(currentSelected,false); }
+function selectChokepoint(pid,post){
+  currentSelected=pid;
+  Object.keys(markers).forEach(k=>{ const style=styleFor(k); if(k===pid){ style.color='#f5c542'; style.fillColor='#f5c542'; style.fillOpacity=.85; style.weight=3; } markers[k].setStyle(style); });
+  if(positions[pid]) map.panTo(positions[pid], {animate:true, duration:0.8});
+  if(post) window.parent.postMessage({type:'chokepoint-click',portid:pid},'*');
+}
+window.addEventListener('message',ev=>{
+  if(ev.data&&ev.data.type==='highlight-chokepoint') selectChokepoint(ev.data.portid,false);
+  if(ev.data&&ev.data.type==='metric-change'){ currentMetric=ev.data.metric||'avg_tanker'; refreshMetric(); }
+  if(ev.data&&ev.data.type==='period-change'){ currentPeriod=ev.data.period||'Before HORMUZ-26'; d3.csv('data/processed/chokepoints_daily.csv',d=>({...d,date:new Date(d.date),n_total:+d.n_total,n_tanker:+d.n_tanker,capacity:+d.capacity})).then(rows=>{ rebuildSummary(rows); refreshMetric(); }); }
+  if(ev.data&&ev.data.type==='reset-highlight'){ currentSelected=null; map.closePopup(); refreshMetric(); }
+});
+</script>
+</body></html>

@@ -1,0 +1,3 @@
+period,start,end,days,avg_total_transits_per_day,avg_tankers_per_day,avg_capacity_per_day,avg_tanker_capacity_per_day,median_total_transits_per_day,median_tankers_per_day
+Before HORMUZ-26,2026-01-01,2026-02-28,59,83.95,45.9,3445036.54,2421732.1,82,45
+After HORMUZ-26 marker,2026-03-01,2026-05-17,78,5.85,2.26,148408.67,77487.36,5,2

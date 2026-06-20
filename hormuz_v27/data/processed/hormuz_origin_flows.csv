@@ -1,0 +1,8 @@
+label,flow_type,lat,lon,mbd_2024,share_2024,is_aggregate,source
+SAUDI ARABIA,origin,26.64,50.17,5.477689579234973,0.3825572539633837,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+UNITED ARAB EMIRATES,origin,25.13,56.35,1.8900929781420766,0.1320025110941924,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+IRAQ,origin,29.73,48.82,3.223645852459016,0.22513672730600556,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+KUWAIT,origin,29.06,48.16,1.3257541338797816,0.09258955870925548,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+QATAR,origin,25.92,51.56,0.6490193579234973,0.04532696855942829,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+IRAN,origin,29.23,50.33,1.3996683715846996,0.09775166718513215,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+other,origin,24.3,52.4,0.35274353551912263,0.024635313182602352,yes,EIA Today in Energy fig3 / Vortexa tanker tracking

@@ -1,0 +1,10 @@
+label,flow_type,lat,lon,mbd_2024,share_2024,is_aggregate,source
+China,destination,35.0,103.0,4.7846856393442625,0.3341584390258964,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+India,destination,21.0,78.0,1.8853302295081966,0.13166988471726115,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+South Korea,destination,36.2,127.9,1.7266257540983607,0.12058609703154759,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+Japan,destination,36.0,138.0,1.5153605710382514,0.10583151353051709,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+Other Asia,destination,13.0,105.0,2.071853393442623,0.14469650631805692,yes,EIA Today in Energy fig3 / Vortexa tanker tracking
+Europe,destination,48.0,10.0,0.7206034344262295,0.050326340527895086,yes,EIA Today in Energy fig3 / Vortexa tanker tracking
+United States,destination,39.0,-98.0,0.4843527459016393,0.0338267902445896,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+Saudi Arabia,destination,24.0,45.0,0.22803622404371585,0.01592585896160377,no,EIA Today in Energy fig3 / Vortexa tanker tracking
+Other,destination,-2.0,80.0,0.9017658169398892,0.06297856964263238,yes,EIA Today in Energy fig3 / Vortexa tanker tracking
