@@ -33,7 +33,7 @@ const fmt={
 const pd=d3.timeParse('%Y-%m-%d');
 const tip=d3.select('#tooltip');
 const C={sea:'#0f4d46',sea2:'#74b8a7',orange:'#d36a38',oil:'#1a1a16',soft:'#6d8e86',gold:'#f5c542'};
-const st={tPeriod:'2026 Jan-May',rkMetric:'avg_tanker',rkPeriod:'Before HORMUZ-26',selectedChokepoint:null,grFuel:'a95',nomosFuel:'a95',nomosMode:'price',nomos:null,nomosQuery:'',nomosAdded:null};
+const st={tPeriod:'2026 Jan-May',rkMetric:'avg_tanker',rkPeriod:'Before HORMUZ-26',selectedChokepoint:null,grFuel:'a95',nomosFuel:'a95',nomosMode:'price',nomos:null,nomosQuery:'',nomosAdded:null,flowSelection:null,flowHover:null};
 const FUEL_LABELS={a95:'A95',a100:'A100',diesel_kinisis:'Diesel',diesel_thermansis:'Heating diesel',lpg:'LPG'};
 const NOMOS_FUELS=[
   ['A95','a95','ga'],
@@ -71,6 +71,9 @@ Promise.all([
       renderRank(D);
     }
     if(e.data?.type==='nomos-click') highlightNomos(e.data.nomos,false);
+    if(e.data?.type==='flow-map-select') setFlowSelection(e.data.kind,e.data.label,true);
+    if(e.data?.type==='flow-map-hover') setFlowHover(e.data.kind,e.data.label,true);
+    if(e.data?.type==='flow-map-hover-clear') setFlowHover(null,null,true);
   });
 });
 
@@ -81,6 +84,27 @@ function rE(d){return{...d,fromdate_parsed:pd((d.fromdate_parsed||'').slice(0,10
 function rM(d){return{date:pd(d.date),brent:+d.brent_usd_per_barrel||null,jet:+d.jet_fuel_usd_per_gallon||null,jetBbl:+d.jet_fuel_usd_per_barrel_equiv||null};}
 function rFlow(d){return{...d,lat:+d.lat,lon:+d.lon,mbd_2024:+d.mbd_2024,share_2024:+d.share_2024||null,is_aggregate:d.is_aggregate==='yes'};}
 function rParts(d){const o={date:pd(d.date)};['a95_retail','a95_refinery','a95_taxes','a95_margin','diesel_retail','diesel_refinery','diesel_taxes','diesel_margin'].forEach(k=>o[k]=+d[k]||null);return o;}
+
+function flowIframePost(message){
+  const iframe=document.getElementById('flow-map-iframe');
+  if(iframe) iframe.contentWindow.postMessage(message,'*');
+}
+function setFlowSelection(kind,label,fromMap=false){
+  st.flowSelection=(kind&&label)?{kind,label}:null;
+  renderFlowBars(window.__DATA__.origins,window.__DATA__.destinations);
+  if(!fromMap){
+    if(st.flowSelection) flowIframePost({type:'flow-select',kind,label});
+    else flowIframePost({type:'flow-clear-selection'});
+  }
+}
+function setFlowHover(kind,label,fromMap=false){
+  st.flowHover=(kind&&label)?{kind,label}:null;
+  renderFlowBars(window.__DATA__.origins,window.__DATA__.destinations);
+  if(!fromMap){
+    if(st.flowHover) flowIframePost({type:'flow-hover',kind,label});
+    else flowIframePost({type:'flow-clear-hover'});
+  }
+}
 
 function initControls(D){
   pills('#traffic-periods',Object.keys(TPERIODS),st.tPeriod,v=>{st.tPeriod=v;renderAll(D);});
@@ -341,25 +365,41 @@ function renderBA(ba){
 }
 
 function renderFlowBars(origins,destinations){
-  renderFlowBar('#destination-chart',destinations,'destination','#0f4d46',false);
-  renderFlowBar('#origin-chart',origins,'origin',C.orange,false);
-  const asia=destinations.filter(d=>['China','India','South Korea','Japan','Other Asia'].includes(d.label));
-  const asiaShare=d3.sum(asia,d=>d.mbd_2024)/d3.sum(destinations,d=>d.mbd_2024);
-  d3.select('#destination-read').text(`EIA/Vortexa 2024: ${fmt.pct(asiaShare)} of the destination markets shown here are in Asia; Europe is also included as a grouped destination from the source figure. Source: U.S. EIA figure data based on Vortexa.`);
-  const topOrigin=origins.slice().sort((a,b)=>d3.descending(a.mbd_2024,b.mbd_2024))[0];
-  d3.select('#origin-read').text(`${topOrigin.label} is the largest named origin in the EIA figure data, at ${fmt.mbd(topOrigin.mbd_2024)} in 2024. Source: U.S. EIA figure data based on Vortexa.`);
+  const destinationRows=destinations.filter(d=>!d.is_aggregate || d.label==='Europe').sort((a,b)=>d3.descending(a.mbd_2024,b.mbd_2024));
+  const originRows=origins.filter(d=>!d.is_aggregate).sort((a,b)=>d3.descending(a.mbd_2024,b.mbd_2024));
+  const destinationScale=d3.scaleSequential().domain(d3.extent(destinationRows,d=>d.mbd_2024)).interpolator(t=>d3.interpolateRgb('#d9f1e4','#0f8f63')(t));
+  const originScale=d3.scaleSequential().domain(d3.extent(originRows,d=>d.mbd_2024)).interpolator(t=>d3.interpolateRgb('#f5d1bd','#c66132')(t));
+  renderFlowBar('#destination-chart',destinationRows,'destination',destinationScale);
+  renderFlowBar('#origin-chart',originRows,'origin',originScale);
+  const asia=destinations.filter(d=>['China','India','South Korea','Japan'].includes(d.label));
+  const asiaShare=d3.sum(asia,d=>d.mbd_2024)/d3.sum(destinationRows,d=>d.mbd_2024);
+  d3.select('#destination-read').text(`Destination markets are shaded by 2024 flow volume. ${fmt.pct(asiaShare)} of the named destination markets shown here are in Asia; Europe is included as a grouped destination from the source figure. Source: U.S. EIA figure data based on Vortexa.`);
+  const topOrigin=originRows[0];
+  d3.select('#origin-read').text(`Origin exporters are also shaded by 2024 flow volume. ${topOrigin.label} is the largest named origin in the EIA figure data, at ${fmt.mbd(topOrigin.mbd_2024)} in 2024. Source: U.S. EIA figure data based on Vortexa.`);
+  if(st.flowSelection) flowIframePost({type:'flow-select',kind:st.flowSelection.kind,label:st.flowSelection.label});
+  else flowIframePost({type:'flow-clear-selection'});
+  if(st.flowHover) flowIframePost({type:'flow-hover',kind:st.flowHover.kind,label:st.flowHover.label});
+  else flowIframePost({type:'flow-clear-hover'});
 }
-function renderFlowBar(sel,data,kind,color,keepAggregates){
+function renderFlowBar(sel,rows,kind,colorScale){
   const svg=d3.select(sel),{W,H}=cS(svg,290);
   const m={top:14,right:44,bottom:28,left:kind==='destination'?112:132};
-  const rows=data.filter(d=>keepAggregates||!d.is_aggregate||d.label==='Europe').sort((a,b)=>d3.descending(a.mbd_2024,b.mbd_2024));
+  const keyFor=d=>d.is_aggregate?`${d.label} *`:d.label;
   const x=d3.scaleLinear().domain([0,d3.max(rows,d=>d.mbd_2024)*1.12]).nice().range([m.left,W-m.right]);
-  const y=d3.scaleBand().domain(rows.map(d=>d.is_aggregate?`${d.label} *`:d.label)).range([m.top,H-m.bottom]).padding(.18);
+  const y=d3.scaleBand().domain(rows.map(keyFor)).range([m.top,H-m.bottom]).padding(.18);
+  const isSelected=d=>st.flowSelection && st.flowSelection.kind===kind && st.flowSelection.label===d.label;
+  const isHovered=d=>st.flowHover && st.flowHover.kind===kind && st.flowHover.label===d.label;
   svg.append('g').attr('class','grid').attr('transform',`translate(0,${H-m.bottom})`).call(d3.axisBottom(x).ticks(4).tickSize(-(H-m.top-m.bottom)).tickFormat('')).call(g=>g.select('.domain').remove());
-  svg.append('g').attr('class','axis').attr('transform',`translate(${m.left},0)`).call(d3.axisLeft(y).tickSize(0)).call(g=>g.select('.domain').remove()).selectAll('text').style('font-size','8px');
+  svg.append('g').attr('class','axis').attr('transform',`translate(${m.left},0)`).call(d3.axisLeft(y).tickSize(0)).call(g=>g.select('.domain').remove()).selectAll('text').style('font-size','8px').attr('fill',d=>{
+    const row=rows.find(r=>keyFor(r)===d);
+    return row && (isSelected(row)||isHovered(row)) ? C.oil : C.soft;
+  }).style('font-weight',d=>{
+    const row=rows.find(r=>keyFor(r)===d);
+    return row && (isSelected(row)||isHovered(row)) ? 700 : 400;
+  });
   svg.append('g').attr('class','axis').attr('transform',`translate(0,${H-m.bottom})`).call(d3.axisBottom(x).ticks(4).tickFormat(d=>`${fmt.one(d)}M`));
-  svg.selectAll('.flow-bar').data(rows).join('rect').attr('class','flow-bar').attr('x',m.left).attr('y',d=>y(d.is_aggregate?`${d.label} *`:d.label)).attr('width',d=>x(d.mbd_2024)-m.left).attr('height',y.bandwidth()).attr('rx',5).attr('fill',color).attr('opacity',.78).on('mousemove',(ev,d)=>showT(ev,`<strong>${d.label}</strong>${fmt.mbd(d.mbd_2024)}${d.share_2024?` · ${fmt.pct(d.share_2024)}`:''}${d.is_aggregate?'<br>Aggregated region label in EIA data':''}`)).on('mouseleave',hideT);
-  svg.selectAll('.flow-label').data(rows).join('text').attr('class','bar-label').attr('x',d=>x(d.mbd_2024)+4).attr('y',d=>y(d.is_aggregate?`${d.label} *`:d.label)+y.bandwidth()/2+3).style('font-size','8px').text(d=>fmt.one(d.mbd_2024));
+  svg.selectAll('.flow-bar').data(rows).join('rect').attr('class','flow-bar').attr('x',m.left).attr('y',d=>y(keyFor(d))).attr('width',d=>x(d.mbd_2024)-m.left).attr('height',y.bandwidth()).attr('rx',5).attr('fill',d=>colorScale(d.mbd_2024)).attr('opacity',d=>isSelected(d)?1:(isHovered(d)?0.94:0.82)).attr('stroke',d=>isSelected(d)?C.oil:(isHovered(d)?(kind==='destination'?'#0f8f63':'#c66132'):'none')).attr('stroke-width',d=>isSelected(d)||isHovered(d)?1.6:0).on('mouseenter',(ev,d)=>{setFlowHover(kind,d.label);}).on('mousemove',(ev,d)=>{showT(ev,`<strong>${d.label}</strong>${fmt.mbd(d.mbd_2024)}${d.share_2024?` · ${fmt.pct(d.share_2024)}`:''}${d.is_aggregate?'<br>Grouped destination region in the EIA data':''}`);}).on('mouseleave',()=>{setFlowHover(null,null);hideT();}).on('click',(ev,d)=>{setFlowSelection(kind,d.label);});
+  svg.selectAll('.flow-label').data(rows).join('text').attr('class','bar-label').attr('x',d=>x(d.mbd_2024)+4).attr('y',d=>y(keyFor(d))+y.bandwidth()/2+3).style('font-size','8px').style('font-weight',d=>isSelected(d)?700:400).text(d=>fmt.one(d.mbd_2024));
 }
 
 function renderPrices(mk){

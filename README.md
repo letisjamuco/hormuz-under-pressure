@@ -1,4 +1,4 @@
-# Hormuz Under Pressure | [Official Website](https://letisjamuco.github.io/hormuz-under-pressure/)
+# Hormuz Under Pressure
 
 An interactive data-story website about the Strait of Hormuz and how maritime chokepoint risk connects to tanker traffic, oil benchmarks, and fuel prices in Greece.
 
