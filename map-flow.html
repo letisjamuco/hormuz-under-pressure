@@ -4,33 +4,34 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 html,body{margin:0;padding:0;height:100%;overflow:hidden}#map{width:100%;height:100%}
-.legend{position:absolute;left:12px;bottom:12px;z-index:500;background:rgba(255,255,255,.95);border:1px solid rgba(14,74,66,.14);border-radius:12px;padding:10px 12px;font:11px/1.35 'Space Mono',monospace;color:#1e5a51;box-shadow:0 10px 24px -18px rgba(8,44,40,.45);max-width:280px}
+.legend{position:absolute;left:12px;bottom:12px;z-index:500;background:rgba(255,255,255,.95);border:1px solid rgba(14,74,66,.14);border-radius:12px;padding:10px 12px;font:11px/1.35 'Space Mono',monospace;color:#1e5a51;box-shadow:0 10px 24px -18px rgba(8,44,40,.45);max-width:300px}
 .legend strong{display:block;color:#082c28;margin-bottom:6px}
-.legend .item{display:flex;align-items:center;gap:7px;margin:4px 0}
-.legend .swatch{display:inline-block;flex:0 0 auto;width:12px;height:12px;border-radius:3px;border:1px solid rgba(15,77,70,.18)}
+.legend .item{display:flex;align-items:flex-start;gap:7px;margin:5px 0}
+.legend .swatch{display:inline-block;flex:0 0 auto;width:12px;height:12px;border-radius:3px;border:1px solid rgba(15,77,70,.18);margin-top:1px}
 .legend .origin{background:#cf6c3e}
 .legend .destination{background:#46a972}
-.legend small{display:block;margin-top:6px;color:#4f6c67}
+.legend small{display:block;margin-top:7px;color:#4f6c67}
 </style>
 </head><body>
 <div id="map"></div>
 <div class="legend">
   <strong>Origins and destination markets</strong>
-  <div class="item"><span class="swatch origin"></span><span>Origin exporters through Hormuz, darker orange = larger 2024 flow</span></div>
-  <div class="item"><span class="swatch destination"></span><span>Destination markets, darker green = larger 2024 flow</span></div>
+  <div class="item"><span class="swatch origin"></span><span>Origin exporters through Hormuz, darker orange = larger 2024 flow, route arrows point toward Hormuz</span></div>
+  <div class="item"><span class="swatch destination"></span><span>Destination markets, darker green = larger 2024 flow, route arrows point away from Hormuz</span></div>
   <small>Grouped destinations such as Europe are shaded as regions from the source figure.</small>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+<script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
 <script>
 const worldBounds=[[-85,-180],[85,180]];
-const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,minZoom:2,worldCopyJump:false,zoomSnap:0.5}).setView([28,62],3);
+const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,minZoom:2,worldCopyJump:false,zoomSnap:0.25}).setView([29,72],3.25);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:12,noWrap:true,bounds:worldBounds,attribution:'© OSM'}).addTo(map);
 map.setMaxBounds(worldBounds);
-map.fitBounds([[10,34],[48,122]],{padding:[12,12]});
+map.fitBounds([[10,40],[48,140]],{padding:[12,12]});
 const hz=[26.35,56.65];
-const fM=d3.format(',.1f');
+const fmtM=d3.format(',.1f');
 const normalize=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
 const properCase=s=>String(s||'').toLowerCase().replace(/\b\w/g,m=>m.toUpperCase());
 
@@ -58,24 +59,38 @@ const europeNames=[
   'Albania','Andorra','Austria','Belarus','Belgium','Bosnia and Herzegovina','Bosnia and Herz.','Bulgaria','Croatia','Czech Republic','Czechia','Denmark','Estonia','Finland','France','Germany','Greece','Hungary','Iceland','Ireland','Italy','Kosovo','Latvia','Liechtenstein','Lithuania','Luxembourg','Malta','Moldova','Monaco','Montenegro','Netherlands','North Macedonia','Macedonia','North Macedonia Republic','Norway','Poland','Portugal','Romania','San Marino','Serbia','Slovakia','Slovenia','Spain','Sweden','Switzerland','Ukraine','United Kingdom','Vatican','Vatican City'
 ].map(normalize);
 const europeSet=new Set(europeNames);
+
 const layersByKey={origin:new Map(),destination:new Map()};
+const routeLayers={origin:new Map(),destination:new Map()};
+const pointByKey={origin:new Map(),destination:new Map()};
 let selected=null;
 let hovered=null;
 let originValue,destinationValue,originScale,destinationScale;
-let originLayer,destinationLayer;
+let originRows=[],destinationRows=[];
 
 function pushLayer(kind,label,layer){
-  const mapRef=layersByKey[kind];
-  if(!mapRef.has(label)) mapRef.set(label,[]);
-  mapRef.get(label).push(layer);
+  if(!layersByKey[kind].has(label)) layersByKey[kind].set(label,[]);
+  layersByKey[kind].get(label).push(layer);
 }
 function valueFor(kind,label){
   return kind==='origin' ? originValue.get(label) : destinationValue.get(label);
 }
+function rowFor(kind,label){
+  const rows=kind==='origin'?originRows:destinationRows;
+  return rows.find(d=>d.label===label);
+}
+function fillFor(kind,label){
+  const v=valueFor(kind,label);
+  return kind==='origin' ? originScale(v) : destinationScale(v);
+}
+function lineColor(kind,label,active=false){
+  const base=fillFor(kind,label);
+  return active ? d3.color(base).darker(0.9).formatHex() : d3.color(base).darker(0.4).formatHex();
+}
 function baseStyle(kind,label){
-  const value=valueFor(kind,label);
-  if(kind==='origin') return {color:'#8d4b27',weight:0.9,fillColor:originScale(value),fillOpacity:0.76,opacity:0.96};
-  return {color:'rgba(15,77,70,.42)',weight:0.8,fillColor:destinationScale(value),fillOpacity:0.68,opacity:0.92};
+  return kind==='origin'
+    ? {color:'#8d4b27',weight:0.9,fillColor:fillFor(kind,label),fillOpacity:0.76,opacity:0.96}
+    : {color:'rgba(15,77,70,.42)',weight:0.8,fillColor:fillFor(kind,label),fillOpacity:0.68,opacity:0.92};
 }
 function styleFor(kind,label){
   const style={...baseStyle(kind,label)};
@@ -88,6 +103,16 @@ function styleFor(kind,label){
   }
   return style;
 }
+function routeStyleFor(kind,label){
+  const isSelected=selected && selected.kind===kind && selected.label===label;
+  const isHovered=hovered && hovered.kind===kind && hovered.label===label;
+  const active=isSelected || isHovered;
+  return {
+    color:lineColor(kind,label,active),
+    weight:active ? (isSelected?3.8:3.1) : 2.3,
+    opacity:active ? 0.98 : 0.82
+  };
+}
 function applyStyles(){
   if(!originValue || !destinationValue) return;
   ['destination','origin'].forEach(kind=>{
@@ -97,25 +122,91 @@ function applyStyles(){
         if((selected && selected.kind===kind && selected.label===label) || (hovered && hovered.kind===kind && hovered.label===label)) layer.bringToFront();
       });
     });
+    routeLayers[kind].forEach((obj,label)=>{
+      const routeStyle=routeStyleFor(kind,label);
+      obj.line.setStyle(routeStyle);
+      obj.decorator.setPatterns([{offset:'72%',repeat:0,symbol:L.Symbol.arrowHead({pixelSize:10,polygon:false,pathOptions:{stroke:true,color:routeStyle.color,weight:routeStyle.weight,opacity:routeStyle.opacity}})}]);
+      if((selected && selected.kind===kind && selected.label===label) || (hovered && hovered.kind===kind && hovered.label===label)) obj.line.bringToFront();
+    });
   });
 }
 function popupHtml(kind,label){
-  if(kind==='origin'){
-    const destLabel=label==='SAUDI ARABIA' ? 'Saudi Arabia' : null;
-    const destText=destLabel && destinationValue.has(destLabel) ? `<br>Destination market: ${fM(destinationValue.get(destLabel))} million b/d` : '';
-    return `<strong>${properCase(label)}</strong><br>Origin exporter: ${fM(originValue.get(label))} million b/d${destText}`;
+  if(kind==='origin') return `<strong>${properCase(label)}</strong><br>Origin exporter: ${fmtM(originValue.get(label))} million b/d`;
+  return `<strong>${label}</strong><br>Destination market: ${fmtM(destinationValue.get(label))} million b/d${label==='Europe' ? '<br><em>Grouped region from the source figure</em>' : ''}`;
+}
+function getAllBounds(kind,label){
+  const list=layersByKey[kind].get(label) || [];
+  let bounds=null;
+  list.forEach(layer=>{
+    const b=layer.getBounds();
+    bounds=bounds?bounds.extend(b):b;
+  });
+  return bounds;
+}
+function focusOn(kind,label){
+  const bounds=getAllBounds(kind,label);
+  if(bounds && bounds.isValid()){
+    map.flyToBounds(bounds.pad(0.45),{duration:0.8,maxZoom:4.5});
+    return;
   }
-  const extra=label==='Europe' ? '<br><em>Grouped region from the source figure</em>' : '';
-  const originText=label==='Saudi Arabia' && originValue.has('SAUDI ARABIA') ? `<br>Origin exporter: ${fM(originValue.get('SAUDI ARABIA'))} million b/d` : '';
-  return `<strong>${label}</strong><br>Destination market: ${fM(destinationValue.get(label))} million b/d${originText}${extra}`;
+  const point=pointByKey[kind].get(label);
+  if(point) map.flyTo(point,4.2,{duration:0.8});
+}
+function selectItem(kind,label,source='map',openPopup=false){
+  selected={kind,label};
+  applyStyles();
+  focusOn(kind,label);
+  if(source==='map') window.parent.postMessage({type:'flow-map-select',kind,label},'*');
+  if(openPopup){
+    const list=layersByKey[kind].get(label) || [];
+    if(list[0]) list[0].openPopup();
+  }
+}
+function hoverItem(kind,label,source='map'){
+  hovered={kind,label};
+  applyStyles();
+  if(source==='map') window.parent.postMessage({type:'flow-map-hover',kind,label},'*');
+}
+function clearHover(source='map'){
+  hovered=null;
+  applyStyles();
+  if(source==='map') window.parent.postMessage({type:'flow-map-hover-clear'},'*');
 }
 function bindFeatureEvents(layer,kind,label){
   layer.bindPopup(popupHtml(kind,label));
   layer.on({
-    mouseover(){ hovered={kind,label}; applyStyles(); window.parent.postMessage({type:'flow-map-hover',kind,label},'*'); },
-    mouseout(){ hovered=null; applyStyles(); window.parent.postMessage({type:'flow-map-hover-clear'},'*'); },
-    click(){ selected={kind,label}; applyStyles(); layer.openPopup(); window.parent.postMessage({type:'flow-map-select',kind,label},'*'); }
+    mouseover(){ hoverItem(kind,label,'map'); },
+    mouseout(){ clearHover('map'); },
+    click(){ selectItem(kind,label,'map',true); }
   });
+}
+function bindRouteEvents(line,decorator,kind,label){
+  const popup=popupHtml(kind,label);
+  line.bindPopup(popup);
+  line.on({
+    mouseover(){ hoverItem(kind,label,'map'); },
+    mouseout(){ clearHover('map'); },
+    click(){ selectItem(kind,label,'map',true); }
+  });
+  decorator.on('mouseover',()=>hoverItem(kind,label,'map'));
+  decorator.on('mouseout',()=>clearHover('map'));
+  decorator.on('click',()=>selectItem(kind,label,'map',true));
+}
+function routeCurve(from,to,kind){
+  const midLat=(from[0]+to[0])/2 + (kind==='origin'?2.5:3.5);
+  const midLng=(from[1]+to[1])/2 + (kind==='origin'?-1.5:2.5);
+  return [from,[midLat,midLng],to];
+}
+function addRoute(kind,row){
+  const label=row.label;
+  const point=[+row.lat,+row.lon];
+  pointByKey[kind].set(label,point);
+  const coords=kind==='origin' ? routeCurve(point,hz,kind) : routeCurve(hz,point,kind);
+  const routeStyle=routeStyleFor(kind,label);
+  const line=L.polyline(coords,{color:routeStyle.color,weight:routeStyle.weight,opacity:routeStyle.opacity,interactive:true,lineCap:'round',lineJoin:'round'}).addTo(map);
+  const decorator=L.polylineDecorator(line,{patterns:[{offset:'72%',repeat:0,symbol:L.Symbol.arrowHead({pixelSize:10,polygon:false,pathOptions:{stroke:true,color:routeStyle.color,weight:routeStyle.weight,opacity:routeStyle.opacity}})}]}).addTo(map);
+  routeLayers[kind].set(label,{line,decorator});
+  bindRouteEvents(line,decorator,kind,label);
 }
 function matchOrigin(props){
   const raw=props.name || props.NAME || props.ADMIN || props.admin || '';
@@ -130,12 +221,12 @@ function matchDestination(props){
 }
 
 Promise.all([
-  d3.csv('data/processed/hormuz_origin_flows.csv',d=>({...d,mbd_2024:+d.mbd_2024,is_aggregate:d.is_aggregate==='yes'})),
-  d3.csv('data/processed/hormuz_destination_flows.csv',d=>({...d,mbd_2024:+d.mbd_2024,is_aggregate:d.is_aggregate==='yes'})),
+  d3.csv('data/processed/hormuz_origin_flows.csv',d=>({...d,mbd_2024:+d.mbd_2024,is_aggregate:d.is_aggregate==='yes',lat:+d.lat,lon:+d.lon})),
+  d3.csv('data/processed/hormuz_destination_flows.csv',d=>({...d,mbd_2024:+d.mbd_2024,is_aggregate:d.is_aggregate==='yes',lat:+d.lat,lon:+d.lon})),
   d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
 ]).then(([origins,destinations,world])=>{
-  const originRows=origins.filter(d=>!d.is_aggregate);
-  const destinationRows=destinations.filter(d=>!d.is_aggregate || d.label==='Europe');
+  originRows=origins.filter(d=>!d.is_aggregate).sort((a,b)=>b.mbd_2024-a.mbd_2024);
+  destinationRows=destinations.filter(d=>d.label==='Europe' || !d.is_aggregate).sort((a,b)=>b.mbd_2024-a.mbd_2024);
   originValue=new Map(originRows.map(d=>[d.label,d.mbd_2024]));
   destinationValue=new Map(destinationRows.map(d=>[d.label,d.mbd_2024]));
   originScale=d3.scaleSequential().domain(d3.extent(originRows,d=>d.mbd_2024)).interpolator(t=>d3.interpolateRgb('#f5d1bd','#c66132')(t));
@@ -143,7 +234,7 @@ Promise.all([
 
   const countries=topojson.feature(world,world.objects.countries).features;
 
-  destinationLayer=L.geoJSON(countries,{
+  L.geoJSON(countries,{
     style:feature=>{
       const label=matchDestination(feature.properties);
       if(!label || !destinationValue.has(label)) return {weight:0,opacity:0,fillOpacity:0};
@@ -157,7 +248,7 @@ Promise.all([
     }
   }).addTo(map);
 
-  originLayer=L.geoJSON(countries,{
+  L.geoJSON(countries,{
     style:feature=>{
       const label=matchOrigin(feature.properties);
       if(!label || !originValue.has(label)) return {weight:0,opacity:0,fillOpacity:0};
@@ -171,28 +262,19 @@ Promise.all([
     }
   }).addTo(map);
 
+  originRows.forEach(row=>addRoute('origin',row));
+  destinationRows.filter(d=>['China','India','South Korea','Japan','Europe','United States','Saudi Arabia'].includes(d.label)).forEach(row=>addRoute('destination',row));
+
   L.circleMarker(hz,{radius:8,color:'#d36a38',fillColor:'#d36a38',fillOpacity:.18,weight:2,dashArray:'4 4'}).addTo(map);
   L.circleMarker(hz,{radius:3,color:'#d36a38',fillColor:'#d36a38',fillOpacity:1,weight:0}).addTo(map).bindPopup('<strong>Strait of Hormuz</strong>');
   applyStyles();
 }).catch(err=>console.error(err));
 
 window.addEventListener('message',e=>{
-  if(e.data?.type==='flow-select'){
-    selected={kind:e.data.kind,label:e.data.label};
-    applyStyles();
-  }
-  if(e.data?.type==='flow-clear-selection'){
-    selected=null;
-    applyStyles();
-  }
-  if(e.data?.type==='flow-hover'){
-    hovered={kind:e.data.kind,label:e.data.label};
-    applyStyles();
-  }
-  if(e.data?.type==='flow-clear-hover'){
-    hovered=null;
-    applyStyles();
-  }
+  if(e.data?.type==='flow-select') selectItem(e.data.kind,e.data.label,'parent',false);
+  if(e.data?.type==='flow-clear-selection'){ selected=null; applyStyles(); map.fitBounds([[10,40],[48,140]],{padding:[12,12]}); }
+  if(e.data?.type==='flow-hover') hoverItem(e.data.kind,e.data.label,'parent');
+  if(e.data?.type==='flow-clear-hover') clearHover('parent');
 });
 </script>
 </body></html>
