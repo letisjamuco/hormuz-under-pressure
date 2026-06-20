@@ -451,8 +451,8 @@ function renderPrices(mk){
   const evX=x(pd('2026-03-01')); svg.append('line').attr('class','event-line').attr('x1',evX).attr('x2',evX).attr('y1',m.top+6).attr('y2',H-m.bottom).attr('stroke-width',1.5); svg.append('text').attr('x',evX+5).attr('y',m.top+18).attr('fill',C.orange).attr('font-family','Space Mono').attr('font-size',8).attr('font-weight',700).text('HORMUZ-26');
   addL(svg,W-m.right-190,m.top+4,[['Brent crude',C.oil],['Jet fuel/bbl',C.orange]]);
   addH(svg,data,x,m,H,d=>`<strong>${fmt.date(d.date)}</strong>Brent: ${d.brent?fmt.usd(d.brent):'-'}<br>Jet: ${d.jetBbl?fmt.usd(d.jetBbl):'-'}`);
-  d3.select('#price-read').text('Global oil benchmarks respond quickly after the disruption marker; this sets up the downstream Greek pump-price story.
-Source: FRED / U.S. EIA.');
+  d3.select('#price-read').text(`Global oil benchmarks respond quickly after the disruption marker; this sets up the downstream Greek pump-price story.
+Source: FRED / U.S. EIA.`);
 }
 function renderGreece(gn){
   const fuelLabel={a95:'Unleaded 95',a100:'Unleaded 100',diesel_kinisis:'Diesel',diesel_thermansis:'Heating diesel',lpg:'LPG (Autogas)'}[st.grFuel]||st.grFuel;
