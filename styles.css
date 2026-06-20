@@ -367,8 +367,8 @@ main { padding-top:64px; }
 .nomos-search-wrap { width:100%; max-width:320px; }
 .chart--nomos-dynamic { height: 400px; }
 
-#ch6 .control-pills { gap:6px; }
-#ch6 .control-pills button { white-space:nowrap; }
+#ch5 .control-pills { gap:6px; }
+#ch5 .control-pills button { white-space:nowrap; }
 
 @media (max-width:980px) {
   .container--wide { width:min(100vw - 16px, 1440px); }
@@ -554,52 +554,6 @@ main { padding-top:64px; }
 }
 #ch2 .btn-reset:hover { color:var(--ink-deep); border-color:rgba(14,74,66,.28); }
 
-.chapter--recap {
-  padding-top: 96px;
-  padding-bottom: 96px;
-}
-.recap-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 22px;
-}
-.recap-card {
-  border: 1px solid rgba(14, 74, 66, .12);
-  background: rgba(255, 255, 255, .72);
-  border-radius: 18px;
-  padding: 18px;
-  box-shadow: 0 18px 48px -34px rgba(8, 44, 40, .45);
-}
-.recap-card span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 24px;
-  border-radius: 999px;
-  background: var(--ink-deep);
-  color: white;
-  font-family: var(--font-mono);
-  font-size: .62rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-.recap-card strong {
-  display: block;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--ink-deep);
-  font-size: .72rem;
-  margin-bottom: 8px;
-}
-.recap-card p {
-  margin: 0;
-  color: var(--ink-soft);
-  font-size: .98rem;
-  line-height: 1.35;
-}
 .pdf-modal {
   position: fixed;
   inset: 0;
@@ -655,7 +609,6 @@ main { padding-top:64px; }
 .pdf-modal__fallback { margin: 0; padding: 10px 16px; border-top: 1px solid rgba(14, 74, 66, .1); font-family: var(--font-mono); font-size: .65rem; }
 .credits__proposal { margin: .2rem 0 1rem; }
 @media (max-width: 860px) {
-  .recap-grid { grid-template-columns: 1fr; }
   .pdf-modal { padding: 8px; }
   .pdf-modal__panel { height: 94vh; width: 98vw; border-radius: 12px; }
 }
