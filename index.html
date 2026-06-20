@@ -45,7 +45,7 @@
   </header>
 
   <main>
-<section class="chapter" id="ch1">
+    <section class="chapter" id="ch1">
       <div class="container chapter__grid chapter__grid--map">
         <div class="chapter__copy">
           <p class="chapter__kicker">CH·01 · THE NARROW GATE</p>
@@ -65,7 +65,7 @@
         </div>
       </div>
     </section>
-<section class="chapter" id="ch2">
+    <section class="chapter" id="ch2">
       <div class="container">
         <div class="chapter__copy chapter__copy--wide chapter__copy--full">
           <p class="chapter__kicker">CH·02 · HORMUZ vs THE WORLD</p>
@@ -102,7 +102,7 @@
         </div>
       </div>
     </section>
-<section class="chapter" id="ch3">
+    <section class="chapter" id="ch3">
       <div class="container">
         <div class="chapter__copy chapter__copy--wide">
           <p class="chapter__kicker">CH·03 · VESSELS &amp; TRAFFIC</p>
@@ -134,16 +134,16 @@
         </div>
       </div>
     </section>
-<section class="chapter" id="ch5">
+    <section class="chapter" id="ch5">
       <div class="container">
         <div class="chapter__copy chapter__copy--wide">
           <p class="chapter__kicker">CH·05 · ROUTES &amp; DESTINATIONS</p>
           <h2>Which countries send oil through Hormuz - and which markets depend on it?</h2>
-          <p>Using cleaned EIA figure data based on Vortexa tanker tracking, this chapter focuses on the country side of the story: origin exporters and the main named destination markets in 2024. Grouped regions are omitted here to keep the picture clear.</p>
+          <p>Using cleaned EIA figure data based on Vortexa tanker tracking, this chapter focuses on the country side of the story: origin exporters and the main destination markets in 2024. On the map, origin countries remain as orange flow arcs, while destination markets are shaded in green so the user can immediately see where exposure is concentrated.</p>
         </div>
         <div class="map-card flow-map-card">
-          <iframe src="map-flow.html" class="map-iframe map-iframe--flow" title="Origin countries through Hormuz" loading="lazy"></iframe>
-          <div class="map-caption">Origin countries through Hormuz. Arc thickness shows 2024 flow volume. Source: EIA/Vortexa.</div>
+          <iframe src="map-flow.html" class="map-iframe map-iframe--flow" title="Origins and destination markets through Hormuz" loading="lazy"></iframe>
+          <div class="map-caption">Origin exporters are shown as orange arcs, destination markets are shaded in green, darker green means larger 2024 flow volume. Source: EIA/Vortexa.</div>
         </div>
         <div class="ch5-flow-grid">
           <div class="viz-card">
@@ -159,12 +159,12 @@
         </div>
       </div>
     </section>
-<section class="chapter" id="ch6">
+    <section class="chapter" id="ch6">
       <div class="container">
         <div class="chapter__copy chapter__copy--wide">
           <p class="chapter__kicker">CH·06 · FROM BARREL TO PUMP</p>
           <h2>How the Hormuz shock reaches Greek fuel stations.</h2>
-          <p>Brent crude and jet fuel benchmarks show the global market reaction. But the effect is also visible at the local level: Greek petrol station prices tracked by the Hellenic Ministry of Development.</p>
+          <p>Brent crude and jet fuel benchmarks show the global market reaction. But the effect is also visible at the local level: Greek petrol station prices tracked by the Hellenic Ministry of Development.</p><p class="chapter__note"><strong>Latest price</strong> shows where fuel is most expensive now. <strong>Change since HORMUZ-26</strong> shows where prices increased most after the disruption marker.</p>
         </div>
         <div class="ch6-grid">
           <div class="viz-card">
@@ -205,7 +205,26 @@
       </div>
     </section>
   </main>
-<section class="chapter chapter--video" id="video-section">
+
+  <section class="chapter chapter--recap" id="recap">
+    <div class="container">
+      <div class="chapter__copy chapter__copy--wide">
+        <p class="chapter__kicker">FINAL READ · WHAT YOU CAN NOW SEE</p>
+        <h2>The invisible chain is now visible.</h2>
+        <p>After moving through the story, the user can connect a narrow maritime gate to tanker traffic, oil flows, global benchmarks, and Greek pump prices.</p>
+      </div>
+      <div class="recap-grid">
+        <article class="recap-card"><span>01</span><strong>Locate the risk</strong><p>See why a narrow passage between Iran, Oman, and the UAE concentrates global energy exposure.</p></article>
+        <article class="recap-card"><span>02</span><strong>Compare chokepoints</strong><p>Separate tanker volume from tanker dependence and understand why Hormuz stands out.</p></article>
+        <article class="recap-card"><span>03</span><strong>Read the traffic shock</strong><p>Track how vessel classes, especially tankers, changed around HORMUZ-26.</p></article>
+        <article class="recap-card"><span>04</span><strong>Follow oil flows</strong><p>Connect origin exporters with destination markets using EIA/Vortexa-based flow data.</p></article>
+        <article class="recap-card"><span>05</span><strong>Connect benchmarks to pumps</strong><p>Trace Brent and jet fuel pressure into Greek retail fuel prices.</p></article>
+        <article class="recap-card"><span>06</span><strong>Compare Greek prefectures</strong><p>Switch between latest price and change since HORMUZ-26 to see different types of local exposure.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter chapter--video" id="video-section">
     <div class="container">
       <div class="chapter__copy chapter__copy--wide"><p class="chapter__kicker">VIDEO · FINAL PRESENTATION</p><h2>Walkthrough.</h2></div>
       <div class="video-placeholder"><div class="video-placeholder__inner">
@@ -214,7 +233,7 @@
       </div></div>
     </div>
   </section>
-<footer class="credits" id="credits">
+  <footer class="credits" id="credits">
     <div class="container">
       <div class="credits__top"><h2 class="credits__title">Credits</h2><span class="credits__seal">M126 · NKUA · 2026</span></div>
       <div class="credits__grid">
@@ -238,7 +257,6 @@
     </div>
   </footer>
 
-  <div id="tooltip" class="tooltip"></div>
   <div class="pdf-modal" id="proposal-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="proposal-modal-title">
     <div class="pdf-modal__panel">
       <div class="pdf-modal__header">
@@ -249,6 +267,8 @@
       <p class="pdf-modal__fallback"><a href="docs/Hormuz_Under_Pressure_Project_Proposal.pdf" target="_blank" rel="noopener">Open PDF in a new tab</a></p>
     </div>
   </div>
+
+  <div id="tooltip" class="tooltip"></div>
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="script.js"></script>
 </body>

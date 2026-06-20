@@ -63,7 +63,7 @@ Promise.all([
   d3.csv(DATA.priceParts,rParts)
 ]).then(([hz,su,chDaily,ba,ev,mk,gn,ga,gd,ga100,gh,glpg,origins,destinations,parts])=>{
   const D={hz,su,chDaily,ba,ev,mk,gn,ga,gd,ga100,gh,glpg,origins,destinations,parts}; window.__DATA__=D;
-  initProgress(); initControls(D); initMapButtons(); renderAll(D); fillHero(ba,mk);
+  initProgress(); initControls(D); initMapButtons(); initProposalModal(); renderAll(D); fillHero(ba,mk);
   window.addEventListener('resize',debounce(()=>renderAll(D),200));
   window.addEventListener('message',e=>{
     if(e.data?.type==='chokepoint-click') {
@@ -131,6 +131,7 @@ function renderAll(D){
   renderNomos(nomosDataset(D));
 }
 
+/* Utils */
 function pills(s,v,a,cb){d3.select(s).selectAll('button').data(v).join('button').attr('type','button').attr('class',d=>d===a?'is-active':null).text(d=>d).on('click',(_,d)=>cb(d));}
 function upP(s,a){d3.select(s).selectAll('button').attr('class',d=>d===a?'is-active':null);}
 function fP(d,l){const[s,e]=TPERIODS[l].map(pd);return d.filter(r=>r.date>=s&&r.date<=e);}
@@ -481,21 +482,24 @@ function highlightNomos(nomos,sendToMap=true){
   if(sendToMap){const iframe=document.getElementById('greece-map-iframe');if(iframe)iframe.contentWindow.postMessage({type:'highlight-nomos',nomos},'*');}
 }
 
+
 function initProposalModal(){
   const modal=document.getElementById('proposal-modal');
-  if(!modal)return;
+  if(!modal) return;
   const openers=document.querySelectorAll('[data-open-proposal]');
   const closers=document.querySelectorAll('[data-close-proposal]');
-  const open=()=>{modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');};
-  const close=()=>{modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open');};
+  const open=()=>{
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+  };
+  const close=()=>{
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+  };
   openers.forEach(btn=>btn.addEventListener('click',open));
   closers.forEach(btn=>btn.addEventListener('click',close));
-  modal.addEventListener('click',ev=>{if(ev.target===modal)close();});
-  document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&modal.classList.contains('is-open'))close();});
-}
-
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',initProposalModal);
-}else{
-  initProposalModal();
+  modal.addEventListener('click',ev=>{ if(ev.target===modal) close(); });
+  document.addEventListener('keydown',ev=>{ if(ev.key==='Escape'&&modal.classList.contains('is-open')) close(); });
 }

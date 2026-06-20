@@ -4,34 +4,105 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 html,body{margin:0;padding:0;height:100%;overflow:hidden}#map{width:100%;height:100%}
-.legend{position:absolute;left:12px;bottom:12px;z-index:500;background:rgba(255,255,255,.93);border:1px solid rgba(14,74,66,.14);border-radius:12px;padding:8px 10px;font:11px/1.35 'Space Mono',monospace;color:#1e5a51;box-shadow:0 10px 24px -18px rgba(8,44,40,.45)}
-.legend span{display:inline-block;width:18px;height:6px;border-radius:99px;margin-right:6px;vertical-align:middle}.legend strong{display:block;color:#082c28;margin-bottom:4px}
+.legend{position:absolute;left:12px;bottom:12px;z-index:500;background:rgba(255,255,255,.95);border:1px solid rgba(14,74,66,.14);border-radius:12px;padding:10px 12px;font:11px/1.35 'Space Mono',monospace;color:#1e5a51;box-shadow:0 10px 24px -18px rgba(8,44,40,.45);max-width:260px}
+.legend strong{display:block;color:#082c28;margin-bottom:6px}
+.legend .item{display:flex;align-items:center;gap:6px;margin:4px 0}
+.legend .swatch{display:inline-block;flex:0 0 auto}
+.legend .line{width:18px;height:6px;border-radius:99px;background:#d36a38}
+.legend .box{width:12px;height:12px;border-radius:3px;background:#6abf69;border:1px solid rgba(15,77,70,.22)}
+.legend small{display:block;margin-top:6px;color:#4f6c67}
 </style>
 </head><body>
 <div id="map"></div>
-<div class="legend"><strong>Origin countries through Hormuz</strong><div><span style="background:#d36a38"></span>2024 flow values (million b/d)</div></div>
+<div class="legend">
+  <strong>Origins and destination markets</strong>
+  <div class="item"><span class="swatch line"></span><span>Origin exporters through Hormuz</span></div>
+  <div class="item"><span class="swatch box"></span><span>Destination markets, darker green = larger 2024 flow</span></div>
+  <small>Grouped destinations such as Europe are shaded as regions from the source figure.</small>
+</div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script>
 const worldBounds=[[-85,-180],[85,180]];
-const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,minZoom:1,worldCopyJump:false}).setView([25,52],4);
+const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,minZoom:1,worldCopyJump:false}).setView([23,52],2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:12,noWrap:true,bounds:worldBounds,attribution:'© OSM'}).addTo(map);
 const hz=[26.35,56.65], orange='#d36a38';
 const fM=d3.format(',.1f');
 const curve=(a,b)=>[a,[(a[0]+b[0])/2 + .9,(a[1]+b[1])/2 - 1.2],b];
 const weight=(v,max)=>Math.max(2,Math.sqrt(v/max)*8);
-d3.csv('data/processed/hormuz_origin_flows.csv',d=>({...d,lat:+d.lat,lon:+d.lon,mbd_2024:+d.mbd_2024,share_2024:+d.share_2024||null,is_aggregate:d.is_aggregate==='yes'})).then(origins=>{
-  const rows=origins.filter(d=>!d.is_aggregate && Number.isFinite(d.lat) && Number.isFinite(d.lon));
-  const max=d3.max(rows,d=>d.mbd_2024)||1;
-  rows.forEach(o=>{
+const normalize=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+
+const namedDestinations={
+  'china':'China',
+  'india':'India',
+  'japan':'Japan',
+  'south korea':'South Korea',
+  'korea republic of':'South Korea',
+  'republic of korea':'South Korea',
+  'united states':'United States',
+  'united states of america':'United States',
+  'saudi arabia':'Saudi Arabia'
+};
+const europeNames=[
+  'Albania','Andorra','Austria','Belarus','Belgium','Bosnia and Herzegovina','Bulgaria','Croatia','Czech Republic','Czechia','Denmark','Estonia','Finland','France','Germany','Greece','Hungary','Iceland','Ireland','Italy','Kosovo','Latvia','Liechtenstein','Lithuania','Luxembourg','Malta','Moldova','Monaco','Montenegro','Netherlands','North Macedonia','Norway','Poland','Portugal','Romania','San Marino','Serbia','Slovakia','Slovenia','Spain','Sweden','Switzerland','Ukraine','United Kingdom','Vatican'
+].map(normalize);
+const europeSet=new Set(europeNames);
+
+Promise.all([
+  d3.csv('data/processed/hormuz_origin_flows.csv',d=>({...d,lat:+d.lat,lon:+d.lon,mbd_2024:+d.mbd_2024,share_2024:+d.share_2024||null,is_aggregate:d.is_aggregate==='yes'})),
+  d3.csv('data/processed/hormuz_destination_flows.csv',d=>({...d,lat:+d.lat,lon:+d.lon,mbd_2024:+d.mbd_2024,share_2024:+d.share_2024||null,is_aggregate:d.is_aggregate==='yes'})),
+  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+]).then(([origins,destinations,world])=>{
+  const destinationRows=destinations.filter(d=>['China','India','South Korea','Japan','Europe','United States','Saudi Arabia'].includes(d.label));
+  const destinationValue=new Map(destinationRows.map(d=>[d.label,d.mbd_2024]));
+  const maxDest=d3.max(destinationRows,d=>d.mbd_2024)||1;
+  const green=d3.scaleSequential().domain([0,maxDest]).interpolator(t=>d3.interpolateRgb('#d7efe2','#0f8f63')(t));
+
+  const countries=topojson.feature(world,world.objects.countries).features;
+  const destinationLayer=L.geoJSON(countries,{
+    style:feature=>{
+      const label=matchDestination(feature.properties);
+      if(!label) return {weight:0,opacity:0,fillOpacity:0};
+      return {
+        color:'rgba(15,77,70,.35)',
+        weight:0.8,
+        fillColor:green(destinationValue.get(label)),
+        fillOpacity:0.72
+      };
+    },
+    onEachFeature:(feature,layer)=>{
+      const label=matchDestination(feature.properties);
+      if(!label) return;
+      const value=destinationValue.get(label);
+      layer.bindPopup(`<strong>${label}</strong><br>${fM(value)} million b/d in 2024<br><em>Destination market through Hormuz</em>`);
+      layer.on({
+        mouseover(){ this.setStyle({weight:1.5,color:'#0f4d46',fillOpacity:0.84}); },
+        mouseout(){ destinationLayer.resetStyle(this); }
+      });
+    }
+  }).addTo(map);
+
+  const originRows=origins.filter(d=>!d.is_aggregate && Number.isFinite(d.lat) && Number.isFinite(d.lon));
+  const maxOrigin=d3.max(originRows,d=>d.mbd_2024)||1;
+  originRows.forEach(o=>{
     const ll=[o.lat,o.lon];
-    L.polyline(curve(ll,hz),{color:orange,weight:weight(o.mbd_2024,max),opacity:.62,smoothFactor:2}).addTo(map)
+    L.polyline(curve(ll,hz),{color:orange,weight:weight(o.mbd_2024,maxOrigin),opacity:.62,smoothFactor:2}).addTo(map)
       .bindPopup(`<strong>${o.label}</strong><br>${fM(o.mbd_2024)} million b/d through Hormuz<br><em>EIA figure data, 2024</em>`);
-    L.circleMarker(ll,{radius:5,color:'#0f4d46',fillColor:orange,fillOpacity:.85,weight:1}).addTo(map)
+    L.circleMarker(ll,{radius:5,color:'#0f4d46',fillColor:orange,fillOpacity:.88,weight:1}).addTo(map)
       .bindPopup(`<strong>${o.label}</strong><br>${fM(o.mbd_2024)} million b/d`);
   });
+
   L.circleMarker(hz,{radius:8,color:orange,fillColor:orange,fillOpacity:.18,weight:2,dashArray:'4 4'}).addTo(map);
   L.circleMarker(hz,{radius:3,color:orange,fillColor:orange,fillOpacity:1,weight:0}).addTo(map).bindPopup('<strong>Strait of Hormuz</strong>');
-});
+
+  function matchDestination(props){
+    const raw=props.name || props.NAME || props.ADMIN || props.admin || '';
+    const key=normalize(raw);
+    if(namedDestinations[key]) return namedDestinations[key];
+    if(europeSet.has(key)) return 'Europe';
+    return null;
+  }
+}).catch(err=>console.error(err));
 </script>
 </body></html>

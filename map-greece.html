@@ -16,6 +16,8 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#eef4f1}#map
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script>
 const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,attributionControl:false,minZoom:5,maxZoom:11,worldCopyJump:false}).setView([38.5,24.0],6);
+// No raster basemap here: the layer intentionally shows only Greek prefecture geometry,
+// avoiding neighbouring-country labels and repeated world tiles during zoom-out.
 const geoUrl='https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/greece-prefectures.geojson';
 const activeStroke='#008c8c', defaultStroke='rgba(8,44,40,.55)';
 const f=d3.format(',.3f'), fp=d3.format('+.0%');
@@ -57,10 +59,15 @@ function metricLabel(v){ return currentMode==='price'?f(v):fp(v); }
 function renderLegend(){ const min=d3.min(values),max=d3.max(values),mid=(min+max)/2; document.getElementById('legend-title').textContent=`${fuelLabels[currentFuel]} ${currentMode==='price'?'latest €/L':'change since HORMUZ-26'}`; d3.select('#legend-scale').html([min,mid,max].map(v=>`<span class="sw" style="background:${color(v)}"></span>${metricLabel(v)}`).join('<br>')); }
 function featurePoint(feature){ const c=d3.geoCentroid(feature); return {lon:c[0],lat:c[1]}; }
 function isAtticaIslandOrIslandUnit(feature){
+  // Spatial matching was too risky: it captured neighbouring mainland polygons
+  // such as Argolida as Attica. Keep Attica assignment name-based only.
   return false;
 }
 function isAtticaNameGreekOrLatin(lk,gk,raw){
   const r=(raw||'').toString().toLowerCase();
+  // Do NOT match generic words like "islands" / "nison" here. Those caused
+  // false positives, especially Sporades / Magnesia. Use only explicit Attica
+  // mainland names and specific Attica islands.
   if(['attica','attiki','athens','athina','athinaion','piraeus','peiraias','pireas','eastattica','anatolikiattiki','westattica','ditikiattiki','westernattica','easternattica','saronic','saronicislands','salamin','salamina','salamis','aegina','aigina','agistri','poros','hydra','ydra','spetses','spetsai','kythira','kithira','cythera','antikythira','troizinia','troezen','methana'].some(k=>lk.includes(k))) return true;
   if(['ΑΤΤΙΚ','ΑΘΗΝ','ΠΕΙΡΑΙ','ΠΕΙΡΑ','ΣΑΡΩΝ','ΣΑΛΑΜΙΝ','ΑΙΓΙΝ','ΑΓΚΙΣΤΡ','ΠΟΡΟΣ','ΠΟΡΟΥ','ΥΔΡΑ','ΣΠΕΤΣ','ΚΥΘΗΡ','ΑΝΤΙΚΥΘΗΡ','ΤΡΟΙΖΗΝ','ΜΕΘΑΝ'].some(k=>gk.includes(k))) return true;
   if(/attic|athen|pirae|saronic|salamin|aegin|agistri|hydra|spets|kythir|cyther|troezen|methana/.test(r)) return true;
@@ -71,6 +78,8 @@ function matchInfo(feature){
   const props=feature.properties||{};
   const raw=props.name||props.NAME||props.Name||props.NOMOS||props.prefecture||props.PREFECTURE||props.NAME_1||props.name_en||props.title||'';
   const lk=latinKey(raw), gk=greekKey(raw);
+  // Priority corrections before any Attica matching. These prevent Saronic/Peloponnese
+  // neighbouring prefectures from being absorbed into Attica.
   if(/argol|argolis|argolida/.test(lk) || gk.includes('ΑΡΓΟΛ')) return {nomos:'ΝΟΜΟΣ ΑΡΓΟΛΙΔΟΣ',strength:4,raw};
   if(/magnes|magnis|sporad/.test(lk) || gk.includes('ΜΑΓΝΗΣ') || gk.includes('ΣΠΟΡΑΔ')) return {nomos:'ΝΟΜΟΣ ΜΑΓΝΗΣΙΑΣ',strength:4,raw};
   if(/lakon|lacon/.test(lk) || gk.includes('ΛΑΚΩΝ')) return {nomos:'ΝΟΜΟΣ ΛΑΚΩΝΙΑΣ',strength:4,raw};
@@ -121,6 +130,7 @@ function addGeojson(geo){
       layer.on('click',()=>{ const el=layer.getElement&&layer.getElement(); if(el) el.blur&&el.blur(); });
     }
   }).addTo(map);
+  // Use fallback polygons only for prefectures that have no named polygon at all. This keeps Attica as all its named pieces, not a nearest wrong polygon.
   datasets[currentFuel].forEach((_,nomos)=>{ if(!layersByNomos.has(nomos) && fallbackCandidates.has(nomos)){ fallbackCandidates.get(nomos).forEach(layer=>addLayerForNomos(nomos,layer)); } });
   map.fitBounds(geoLayer.getBounds(),{padding:[10,10]});
 }
