@@ -75,6 +75,10 @@ Promise.all([
     if(e.data?.type==='flow-map-hover') setFlowHover(e.data.kind,e.data.label,true);
     if(e.data?.type==='flow-map-hover-clear') setFlowHover(null,null,true);
     if(e.data?.type==='flow-map-reset') setFlowSelection(null,null,true);
+    if(e.data?.type==='world-map-clear-selection') {
+      st.selectedChokepoint=null;
+      renderRank(D);
+    }
   });
 });
 
@@ -103,7 +107,8 @@ function setFlowSelection(kind,label,fromMap=false){
   if(!fromMap){
     if(st.flowSelection) {
       flowIframePost({type:'flow-select',kind,label});
-      setTimeout(()=>flowIframePost({type:'flow-select',kind,label}),90);
+      setTimeout(()=>flowIframePost({type:'flow-select',kind,label}),120);
+      setTimeout(()=>flowIframePost({type:'flow-select',kind,label}),260);
     } else {
       flowIframePost({type:'flow-clear-selection'});
     }
@@ -281,7 +286,8 @@ function renderRank(D){
   const base=st.rkMetric==='avg_tanker'
     ? `${st.rkPeriod}. Ranking shows the top 15 chokepoints by average tankers/day, using ${periodText}. Hormuz ranks #${rank}/28.`
     : `${st.rkPeriod}. Ranking shows the top 15 chokepoints by tanker share, using ${periodText}. Hormuz ranks #${rank}/28.`;
-  d3.select('#rank-read').text(`${base} Source: IMF PortWatch.`);
+  d3.select('#rank-read').text(`${base}
+Source: IMF PortWatch.`);
 }
 
 function highlightBar(pid){
@@ -338,7 +344,8 @@ function renderMixArea(hz){
   addH(svg,data,x,{top:m.top,bottom:m.bottom,left:m.left},H,d=>`<strong>${st.tPeriod==='Full record'?d3.timeFormat('%b %Y')(d.date):fmt.date(d.date)}</strong>Tankers: ${fmt.num(d.n_tanker)}<br>Containers: ${fmt.num(d.n_container)}<br>Dry bulk: ${fmt.num(d.n_dry_bulk)}<br>General cargo: ${fmt.num(d.n_general_cargo)}<br>Ro-Ro: ${fmt.num(d.n_roro)}`);
   const before=raw.filter(d=>d.date<pd('2026-03-01')),after=raw.filter(d=>d.date>=pd('2026-03-01'));
   const bTk=d3.mean(before,d=>d.n_tanker)||0,aTk=d3.mean(after,d=>d.n_tanker)||0;
-  d3.select('#mix-area-read').text(`${st.tPeriod}. Each vessel class has its own panel and all panels share the same y-scale, so you can compare both the size of each class and the post-HORMUZ drop. Ro-Ro is now included as well. Tankers fall from ${fmt.one(bTk)} to ${fmt.one(aTk)} per day after HORMUZ-26. Source: IMF PortWatch.`);
+  d3.select('#mix-area-read').text(`${st.tPeriod}. Each vessel class has its own panel and all panels share the same y-scale, so you can compare both the size of each class and the post-HORMUZ drop. Ro-Ro is now included as well. Tankers fall from ${fmt.one(bTk)} to ${fmt.one(aTk)} per day after HORMUZ-26.
+Source: IMF PortWatch.`);
 }
 
 function renderMix(hz){
@@ -353,7 +360,8 @@ function renderMix(hz){
   svg.append('text').attr('x',cx).attr('y',cy-6).attr('text-anchor','middle').attr('font-family','Space Mono').attr('font-size',9).attr('fill',C.soft).text('TANKER SHARE');
   svg.append('text').attr('x',cx).attr('y',cy+14).attr('text-anchor','middle').attr('font-family','Bebas Neue').attr('font-size',28).attr('fill',C.oil).text(fmt.pct(vals[0].share));
   const lx=W*.56,ly=Math.max(22,H/2-54);vals.slice(0,5).forEach((v,i)=>{svg.append('rect').attr('x',lx).attr('y',ly+i*18).attr('width',14).attr('height',7).attr('rx',3).attr('fill',v.color);svg.append('text').attr('x',lx+20).attr('y',ly+i*18+7).attr('font-family','Space Mono').attr('font-size',9).attr('fill',C.soft).text(`${v.label} ${fmt.pct(v.share)}`);});
-  d3.select('#mix-read').text(`${st.tPeriod}: tankers make up ${fmt.pct(vals[0].share)} of the shown vessel classes. Source: IMF PortWatch.`);
+  d3.select('#mix-read').text(`${st.tPeriod}: tankers make up ${fmt.pct(vals[0].share)} of the shown vessel classes.
+Source: IMF PortWatch.`);
 }
 
 function renderTraffic(hz,ev){
@@ -394,9 +402,11 @@ function renderFlowBars(origins,destinations){
   renderFlowBar('#origin-chart',originRows,'origin',originScale);
   const asia=destinations.filter(d=>['China','India','South Korea','Japan'].includes(d.label));
   const asiaShare=d3.sum(asia,d=>d.mbd_2024)/d3.sum(destinationRows,d=>d.mbd_2024);
-  d3.select('#destination-read').text(`Destination markets are shaded by 2024 flow volume. ${fmt.pct(asiaShare)} of the named destination markets shown here are in Asia; Europe is included as a grouped destination from the source figure. Click a bar to focus the route on the globe. Source: U.S. EIA figure data based on Vortexa.`);
+  d3.select('#destination-read').text(`Destination markets are shaded by 2024 flow volume. ${fmt.pct(asiaShare)} of the named destination markets shown here are in Asia; Europe is included as a grouped destination from the source figure. Click a bar to focus the route on the globe.
+Source: U.S. EIA figure data based on Vortexa.`);
   const topOrigin=originRows[0];
-  d3.select('#origin-read').text(`Origin exporters are also shaded by 2024 flow volume. ${topOrigin.label} is the largest named origin in the EIA figure data, at ${fmt.mbd(topOrigin.mbd_2024)} in 2024. Click a bar to focus the route on the globe. Source: U.S. EIA figure data based on Vortexa.`);
+  d3.select('#origin-read').text(`Origin exporters are also shaded by 2024 flow volume. ${topOrigin.label} is the largest named origin in the EIA figure data, at ${fmt.mbd(topOrigin.mbd_2024)} in 2024. Click a bar to focus the route on the globe.
+Source: U.S. EIA figure data based on Vortexa.`);
   if(st.flowSelection) flowIframePost({type:'flow-select',kind:st.flowSelection.kind,label:st.flowSelection.label});
   else flowIframePost({type:'flow-clear-selection'});
   if(!st.flowSelection){
@@ -441,7 +451,8 @@ function renderPrices(mk){
   const evX=x(pd('2026-03-01')); svg.append('line').attr('class','event-line').attr('x1',evX).attr('x2',evX).attr('y1',m.top+6).attr('y2',H-m.bottom).attr('stroke-width',1.5); svg.append('text').attr('x',evX+5).attr('y',m.top+18).attr('fill',C.orange).attr('font-family','Space Mono').attr('font-size',8).attr('font-weight',700).text('HORMUZ-26');
   addL(svg,W-m.right-190,m.top+4,[['Brent crude',C.oil],['Jet fuel/bbl',C.orange]]);
   addH(svg,data,x,m,H,d=>`<strong>${fmt.date(d.date)}</strong>Brent: ${d.brent?fmt.usd(d.brent):'-'}<br>Jet: ${d.jetBbl?fmt.usd(d.jetBbl):'-'}`);
-  d3.select('#price-read').text('Global oil benchmarks respond quickly after the disruption marker; this sets up the downstream Greek pump-price story. Source: FRED / U.S. EIA.');
+  d3.select('#price-read').text('Global oil benchmarks respond quickly after the disruption marker; this sets up the downstream Greek pump-price story.
+Source: FRED / U.S. EIA.');
 }
 function renderGreece(gn){
   const fuelLabel={a95:'Unleaded 95',a100:'Unleaded 100',diesel_kinisis:'Diesel',diesel_thermansis:'Heating diesel',lpg:'LPG (Autogas)'}[st.grFuel]||st.grFuel;
@@ -460,7 +471,8 @@ function renderGreece(gn){
   const evD=pd('2026-03-01');if(evD>=x.domain()[0]&&evD<=x.domain()[1])addEv(svg,x(evD),m.top,H-m.bottom,'HORMUZ-26');
   addH(svg,data,x,m,H,d=>`<strong>${fmt.date(d.date)}</strong>${fuelLabel}: ${fmt.eur(d.val)}/litre`);
   const first=data[0].val,last=data[data.length-1].val,chg=(last/first-1);
-  d3.select('#greece-read').text(`${fuelLabel}: ${fmt.eur(first)} to ${fmt.eur(last)} (${fmt.sp(chg)}). Source: fuelprices.gr, Hellenic Ministry of Development.`);
+  d3.select('#greece-read').text(`${fuelLabel}: ${fmt.eur(first)} to ${fmt.eur(last)} (${fmt.sp(chg)}).
+Source: fuelprices.gr, Hellenic Ministry of Development.`);
 }
 function renderDecomposition(parts){
   const svg=d3.select('#decomposition-chart'),{W,H}=cS(svg,250);
@@ -539,7 +551,8 @@ function renderNomos(ga){
   svg.selectAll('.nml').data(data).join('text').attr('class','nml bar-label').style('font-size','7.5px').attr('x',d=>st.nomosMode==='change'?x(d.metric)+5:x(d.metric)+4).attr('y',d=>y(d.short)+y.bandwidth()/2+2.5).text(d=>st.nomosMode==='price'?fmt.eur(d.price):fmt.sp(d.delta));
   const searchedText=qUse ? (qMatch ? ` Added searched prefecture: ${qMatch.short}.` : ' No prefecture matches the search yet.') : '';
   const viewText=st.nomosMode==='price'?'latest fuel price':'percentage increase since the last pre-HORMUZ-26 value';
-  d3.select('#nomos-read').text(`Current view: ${viewText}. List shows the 5 highest, the 5 lowest, plus Attica and any searched or selected prefecture. The change view compares ${lastCol} with ${beforeCol}. Source: fuelprices.gr, Hellenic Ministry of Development.${searchedText}`);
+  d3.select('#nomos-read').text(`Current view: ${viewText}. List shows the 5 highest, the 5 lowest, plus Attica and any searched or selected prefecture. The change view compares ${lastCol} with ${beforeCol}.
+Source: fuelprices.gr, Hellenic Ministry of Development.${searchedText}`);
 }
 
 function highlightNomos(nomos,sendToMap=true){

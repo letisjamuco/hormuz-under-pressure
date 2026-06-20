@@ -32,7 +32,7 @@ svg{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
 <div id="map">
   <svg aria-label="Orthographic globe showing Hormuz oil origins and destination markets"></svg>
   <div class="overlay overlay--status"><div class="pill" id="status">Click a bar or country to focus one route. <em>Drag to rotate.</em></div></div>
-  <div class="overlay overlay--controls"><button type="button" class="control-btn" id="reset-view">Reset</button></div>
+  <div class="overlay overlay--controls"><button type="button" class="control-btn" id="reset-view">Clear selection</button></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
@@ -101,22 +101,22 @@ function focusParams(kind,label){
   const distanceDeg=d3.geoDistance(hz,target)*180/Math.PI;
   let focus,zoom;
   if(kind==='origin'){
-    focus=d3.geoInterpolate(hz,target)(0.5);
-    zoom=2.55;
-  } else if(label==='Europe'){
     focus=d3.geoInterpolate(hz,target)(0.52);
-    zoom=1.18;
+    zoom=2.85;
+  } else if(label==='Europe'){
+    focus=d3.geoInterpolate(hz,target)(0.50);
+    zoom=1.32;
   } else if(distanceDeg <= 45){
-    focus=d3.geoInterpolate(hz,target)(0.5);
-    zoom=1.35;
+    focus=d3.geoInterpolate(hz,target)(0.50);
+    zoom=1.55;
   } else if(distanceDeg <= 90){
     focus=d3.geoInterpolate(hz,target)(0.48);
-    zoom=1.18;
+    zoom=1.34;
   } else {
     focus=d3.geoInterpolate(hz,target)(0.42);
-    zoom=1.04;
+    zoom=1.18;
   }
-  return {rotate:[-focus[0],tilt-focus[1],0],zoom};
+  return {rotate:[-focus[0],-focus[1],0],zoom};
 }
 function updateStatus(){
   const item=activeItem();
@@ -125,7 +125,7 @@ function updateStatus(){
   status.html(`<strong>${labelText(item.kind,item.label)}</strong> · ${role} · ${fmt(valueFor(item.kind,item.label))}M b/d`);
 }
 function render(){
-  projection.translate([width/2,height/2]).scale(baseScale*currentZoom);
+  projection.translate([width/2,height*0.54]).scale(baseScale*currentZoom);
   svg.select('.sphere').attr('d',path(sphere));
   if(countrySel){
     countrySel
@@ -155,7 +155,7 @@ function resize(){
   width=Math.max(320,rect.width);
   height=Math.max(260,rect.height);
   svg.attr('viewBox',`0 0 ${width} ${height}`);
-  baseScale=Math.min(width,height)*0.52;
+  baseScale=Math.min(width,height)*0.50;
   render();
 }
 function animateView(toRotate,toZoom,duration=950){
@@ -167,9 +167,14 @@ function animateView(toRotate,toZoom,duration=950){
     projection.rotate(iv(t));
     currentZoom=fromZoom+(toZoom-fromZoom)*t;
     render();
+  }).on('end',()=>{
+    if(zoomBehavior) svg.call(zoomBehavior.transform,d3.zoomIdentity.scale(currentZoom));
   });
 }
-function focusSelection(kind,label){const cfg=focusParams(kind,label); animateView(cfg.rotate,cfg.zoom,1050);}
+function focusSelection(kind,label){
+  const cfg=focusParams(kind,label);
+  requestAnimationFrame(()=>animateView(cfg.rotate,cfg.zoom,1050));
+}
 function resetView(announce=false){animateView(defaultRotate,1,900); if(announce) window.parent.postMessage({type:'flow-map-reset'},'*');}
 function selectItem(kind,label,from='map'){
   selected={kind,label};
@@ -208,7 +213,7 @@ function setupScene(world){
   routeSel=svg.append('path').attr('class','route');
   focusSel=svg.append('g');
   svg.call(d3.drag().on('start',()=>container.classList.add('is-dragging')).on('drag',event=>{svg.interrupt('focus'); const r=projection.rotate(); projection.rotate([r[0]+event.dx*.34,r[1]-event.dy*.34,r[2]]); render();}).on('end',()=>container.classList.remove('is-dragging')));
-  zoomBehavior=d3.zoom().scaleExtent([0.88,2.35]).on('zoom',event=>{svg.interrupt('focus'); currentZoom=event.transform.k; render();});
+  zoomBehavior=d3.zoom().scaleExtent([0.88,3.0]).on('zoom',event=>{svg.interrupt('focus'); currentZoom=event.transform.k; render();});
   svg.call(zoomBehavior).call(zoomBehavior.transform,d3.zoomIdentity.scale(1));
   resize();
 }
@@ -229,7 +234,10 @@ Promise.all([
 
 resetBtn.addEventListener('click',()=>clearSelection('map'));
 function handleFlowMessage(message){
-  if(message?.type==='flow-select') selectItem(message.kind,message.label,'parent');
+  if(message?.type==='flow-select') {
+    selectItem(message.kind,message.label,'parent');
+    setTimeout(()=>focusSelection(message.kind,message.label),80);
+  }
   if(message?.type==='flow-clear-selection') clearSelection('parent');
   if(message?.type==='flow-hover') hoverItem(message.kind,message.label,'parent');
   if(message?.type==='flow-clear-hover') {hovered=null; render();}

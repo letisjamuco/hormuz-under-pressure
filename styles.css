@@ -85,7 +85,7 @@ button,select,a,.leaflet-container { cursor:var(--ship-cursor),pointer; }
 #world-map { height:380px; min-height:300px; }
 #flow-map { height:320px; min-height:260px; }
 .leaflet-container { font-family:var(--font-serif); background:var(--sea-soft); }
-.map-caption { padding:7px 12px 9px; color:var(--ink-soft); font-family:var(--font-mono); font-size:.54rem; }
+.map-caption { padding:7px 12px 9px; color:var(--ink-soft); font-family:var(--font-mono); font-size:.54rem; white-space:pre-line; }
 
 /* VIZ CARDS */
 .viz-card { padding:14px 14px 12px; }
@@ -112,7 +112,7 @@ button,select,a,.leaflet-container { cursor:var(--ship-cursor),pointer; }
 .line-jet { stroke:var(--orange); }
 .line-primary { stroke:var(--sea-deep); }
 .event-line { stroke:var(--orange); stroke-width:1.5; stroke-dasharray:5 6; opacity:.85; }
-.chart-read { margin:5px 2px 0; color:var(--ink-soft); font-size:.78rem; line-height:1.22; }
+.chart-read { margin:5px 2px 0; color:var(--ink-soft); font-size:.78rem; line-height:1.22; white-space:pre-line; }
 .bar-label,.plot-label { font-family:var(--font-mono); font-size:9px; fill:var(--ink-deep); font-weight:700; }
 
 /* FLOW MAP */
