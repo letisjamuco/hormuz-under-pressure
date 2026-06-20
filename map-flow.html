@@ -102,7 +102,7 @@ function focusParams(kind,label){
   let focus,zoom;
   if(kind==='origin'){
     focus=d3.geoInterpolate(hz,target)(0.5);
-    zoom=2.25;
+    zoom=2.55;
   } else if(label==='Europe'){
     focus=d3.geoInterpolate(hz,target)(0.52);
     zoom=1.18;
@@ -155,7 +155,7 @@ function resize(){
   width=Math.max(320,rect.width);
   height=Math.max(260,rect.height);
   svg.attr('viewBox',`0 0 ${width} ${height}`);
-  baseScale=Math.min(width,height)*0.47;
+  baseScale=Math.min(width,height)*0.52;
   render();
 }
 function animateView(toRotate,toZoom,duration=950){

@@ -140,17 +140,17 @@
           <h2>Which countries send oil through Hormuz - and which markets depend on it?</h2>
           <p>Using cleaned EIA figure data based on Vortexa tanker tracking, this chapter focuses on the country side of the story, origin exporters and the main destination markets in 2024. Click either bar chart or a country on the map to trace the route through Hormuz. Origin exporters are shaded in orange, destination markets are shaded in green, and darker shades mean larger 2024 flow volumes.</p>
         </div>
-        <div class="map-card flow-map-card">
-          <iframe src="map-flow.html" id="flow-map-iframe" class="map-iframe map-iframe--flow" title="Origins and destination markets through Hormuz" loading="lazy"></iframe>
-          <div class="map-caption">Click a country or a bar to focus the map on a single route. Origin exporters are shaded in orange, destination markets are shaded in green, and darker shades mean larger 2024 flow volume. Source: EIA/Vortexa.</div>
-        </div>
-        <div class="ch5-flow-grid">
-          <div class="viz-card">
+        <div class="flow-dashboard">
+          <div class="viz-card flow-panel flow-panel--origin">
             <div class="viz-card__head"><div><span class="mini-kicker">EIA/Vortexa · 2024</span><h3>Origin countries through Hormuz</h3></div></div>
             <svg class="chart chart--destination" id="origin-chart"></svg>
             <p class="chart-read" id="origin-read"></p>
           </div>
-          <div class="viz-card">
+          <div class="map-card flow-map-card">
+            <iframe src="map-flow.html" id="flow-map-iframe" class="map-iframe map-iframe--flow" title="Origins and destination markets through Hormuz" loading="lazy"></iframe>
+            <div class="map-caption">Click a country or a bar to focus the globe on one route. Orange = origin exporters, green = destination markets. Darker shades mean larger 2024 flow volume. Source: EIA/Vortexa.</div>
+          </div>
+          <div class="viz-card flow-panel flow-panel--destination">
             <div class="viz-card__head"><div><span class="mini-kicker">EIA/Vortexa · 2024</span><h3>Top destination markets</h3></div></div>
             <svg class="chart chart--destination" id="destination-chart"></svg>
             <p class="chart-read" id="destination-read"></p>

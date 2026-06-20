@@ -101,8 +101,12 @@ function setFlowSelection(kind,label,fromMap=false){
   st.flowHover=null;
   renderFlowBars(window.__DATA__.origins,window.__DATA__.destinations);
   if(!fromMap){
-    if(st.flowSelection) flowIframePost({type:'flow-select',kind,label});
-    else flowIframePost({type:'flow-clear-selection'});
+    if(st.flowSelection) {
+      flowIframePost({type:'flow-select',kind,label});
+      setTimeout(()=>flowIframePost({type:'flow-select',kind,label}),90);
+    } else {
+      flowIframePost({type:'flow-clear-selection'});
+    }
     flowIframePost({type:'flow-clear-hover'});
   }
 }
