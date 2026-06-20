@@ -70,6 +70,8 @@ let originScale,destinationScale;
 let selected=null,hovered=null;
 let countrySel,borderSel,routeSel,focusSel;
 let zoomBehavior;
+let mapReady=false;
+let pendingFlowMessage=null;
 
 function matchOrigin(props){return originAliases[normalize(props.name||props.NAME||props.ADMIN||props.admin||'')]||null;}
 function matchDestination(props){const key=normalize(props.name||props.NAME||props.ADMIN||props.admin||'');if(destinationAliases[key]) return destinationAliases[key];if(europeSet.has(key)) return 'Europe';return null;}
@@ -230,17 +232,27 @@ Promise.all([
   originScale=d3.scaleSequential().domain(d3.extent(originRows,d=>d.mbd_2024)).interpolator(t=>d3.interpolateRgb('#f5d1bd','#c66132')(t));
   destinationScale=d3.scaleSequential().domain(d3.extent(destinationRows,d=>d.mbd_2024)).interpolator(t=>d3.interpolateRgb('#d9f1e4','#0f8f63')(t));
   setupScene(world);
+  mapReady=true;
+  if(pendingFlowMessage){ const msg=pendingFlowMessage; pendingFlowMessage=null; handleFlowMessage(msg); }
 });
 
 resetBtn.addEventListener('click',()=>clearSelection('map'));
 function handleFlowMessage(message){
-  if(message?.type==='flow-select') {
-    selectItem(message.kind,message.label,'parent');
-    setTimeout(()=>focusSelection(message.kind,message.label),80);
+  if(!message || !message.type) return;
+  if(!mapReady && message.type!=='flow-clear-hover'){
+    pendingFlowMessage=message;
+    return;
   }
-  if(message?.type==='flow-clear-selection') clearSelection('parent');
-  if(message?.type==='flow-hover') hoverItem(message.kind,message.label,'parent');
-  if(message?.type==='flow-clear-hover') {hovered=null; render();}
+  if(message.type==='flow-select') {
+    hovered=null;
+    selected={kind:message.kind,label:message.label};
+    render();
+    focusSelection(message.kind,message.label);
+    setTimeout(()=>focusSelection(message.kind,message.label),90);
+  }
+  if(message.type==='flow-clear-selection') clearSelection('parent');
+  if(message.type==='flow-hover') hoverItem(message.kind,message.label,'parent');
+  if(message.type==='flow-clear-hover') {hovered=null; render();}
 }
 window.handleFlowMessage=handleFlowMessage;
 window.addEventListener('resize',resize);

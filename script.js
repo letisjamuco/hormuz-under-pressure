@@ -95,30 +95,34 @@ function flowIframePost(message){
   if(!iframe || !iframe.contentWindow) return;
   try{
     if(typeof iframe.contentWindow.handleFlowMessage==='function') iframe.contentWindow.handleFlowMessage(message);
-    else iframe.contentWindow.postMessage(message,'*');
-  }catch(err){
+  }catch(err){ }
+  try{
     iframe.contentWindow.postMessage(message,'*');
-  }
+  }catch(err){ }
+}
+function sendFlowFocus(kind,label){
+  const msg={type:'flow-select',kind,label};
+  flowIframePost(msg);
+  requestAnimationFrame(()=>flowIframePost(msg));
+  setTimeout(()=>flowIframePost(msg),140);
+  setTimeout(()=>flowIframePost(msg),320);
 }
 function setFlowSelection(kind,label,fromMap=false){
   st.flowSelection=(kind&&label)?{kind,label}:null;
   st.flowHover=null;
-  renderFlowBars(window.__DATA__.origins,window.__DATA__.destinations);
   if(!fromMap){
-    if(st.flowSelection) {
-      flowIframePost({type:'flow-select',kind,label});
-      setTimeout(()=>flowIframePost({type:'flow-select',kind,label}),120);
-      setTimeout(()=>flowIframePost({type:'flow-select',kind,label}),260);
-    } else {
-      flowIframePost({type:'flow-clear-selection'});
-    }
+    if(st.flowSelection) sendFlowFocus(kind,label);
+    else flowIframePost({type:'flow-clear-selection'});
     flowIframePost({type:'flow-clear-hover'});
   }
+  renderFlowBars(window.__DATA__.origins,window.__DATA__.destinations);
+  if(!fromMap && st.flowSelection) sendFlowFocus(kind,label);
 }
 function setFlowHover(kind,label,fromMap=false){
   st.flowHover=(kind&&label)?{kind,label}:null;
-  renderFlowBars(window.__DATA__.origins,window.__DATA__.destinations);
-  if(!fromMap && !st.flowSelection){
+  if(fromMap){
+    renderFlowBars(window.__DATA__.origins,window.__DATA__.destinations);
+  } else if(!st.flowSelection){
     if(st.flowHover) flowIframePost({type:'flow-hover',kind,label});
     else flowIframePost({type:'flow-clear-hover'});
   }
@@ -216,8 +220,20 @@ function initMapButtons(){
     btn.className='map-fullscreen-btn';
     btn.textContent='Full screen';
     btn.addEventListener('click',()=>{
-      if(document.fullscreenElement===card){ document.exitFullscreen?.(); return; }
+      const iframe=card.querySelector('iframe');
+      const notify=()=>{
+        if(iframe&&iframe.contentWindow) iframe.contentWindow.postMessage({type:'invalidate-size'},'*');
+      };
+      if(document.fullscreenElement===card){
+        document.exitFullscreen?.();
+        setTimeout(notify,80);
+        setTimeout(notify,260);
+        return;
+      }
       card.requestFullscreen?.();
+      setTimeout(notify,80);
+      setTimeout(notify,260);
+      setTimeout(notify,520);
     });
     card.insertBefore(btn, card.firstChild);
   });
@@ -407,14 +423,6 @@ Source: U.S. EIA figure data based on Vortexa.`);
   const topOrigin=originRows[0];
   d3.select('#origin-read').text(`Origin exporters are also shaded by 2024 flow volume. ${topOrigin.label} is the largest named origin in the EIA figure data, at ${fmt.mbd(topOrigin.mbd_2024)} in 2024. Click a bar to focus the route on the globe.
 Source: U.S. EIA figure data based on Vortexa.`);
-  if(st.flowSelection) flowIframePost({type:'flow-select',kind:st.flowSelection.kind,label:st.flowSelection.label});
-  else flowIframePost({type:'flow-clear-selection'});
-  if(!st.flowSelection){
-    if(st.flowHover) flowIframePost({type:'flow-hover',kind:st.flowHover.kind,label:st.flowHover.label});
-    else flowIframePost({type:'flow-clear-hover'});
-  } else {
-    flowIframePost({type:'flow-clear-hover'});
-  }
 }
 function renderFlowBar(sel,rows,kind,colorScale){
   const svg=d3.select(sel),{W,H}=cS(svg,290);
@@ -433,7 +441,7 @@ function renderFlowBar(sel,rows,kind,colorScale){
     return row && (isSelected(row)||isHovered(row)) ? 700 : 400;
   });
   svg.append('g').attr('class','axis').attr('transform',`translate(0,${H-m.bottom})`).call(d3.axisBottom(x).ticks(4).tickFormat(d=>`${fmt.one(d)}M`));
-  svg.selectAll('.flow-bar').data(rows).join('rect').attr('class','flow-bar').attr('x',m.left).attr('y',d=>y(keyFor(d))).attr('width',d=>x(d.mbd_2024)-m.left).attr('height',y.bandwidth()).attr('rx',5).attr('fill',d=>colorScale(d.mbd_2024)).attr('opacity',d=>isSelected(d)?1:(isHovered(d)?0.94:0.82)).attr('stroke',d=>isSelected(d)?C.oil:(isHovered(d)?(kind==='destination'?'#0f8f63':'#c66132'):'none')).attr('stroke-width',d=>isSelected(d)||isHovered(d)?1.6:0).on('mouseenter',(ev,d)=>{setFlowHover(kind,d.label);}).on('mousemove',(ev,d)=>{showT(ev,`<strong>${d.label}</strong>${fmt.mbd(d.mbd_2024)}${d.share_2024?` · ${fmt.pct(d.share_2024)}`:''}${d.is_aggregate?'<br>Grouped destination region in the EIA data':''}`);}).on('mouseleave',()=>{setFlowHover(null,null);hideT();}).on('click',(ev,d)=>{setFlowSelection(kind,d.label);});
+  svg.selectAll('.flow-bar').data(rows).join('rect').attr('class','flow-bar').attr('x',m.left).attr('y',d=>y(keyFor(d))).attr('width',d=>x(d.mbd_2024)-m.left).attr('height',y.bandwidth()).attr('rx',5).attr('fill',d=>colorScale(d.mbd_2024)).attr('opacity',d=>isSelected(d)?1:(isHovered(d)?0.94:0.82)).attr('stroke',d=>isSelected(d)?C.oil:(isHovered(d)?(kind==='destination'?'#0f8f63':'#c66132'):'none')).attr('stroke-width',d=>isSelected(d)||isHovered(d)?1.6:0).on('mouseenter',(ev,d)=>{ if(!st.flowSelection) flowIframePost({type:'flow-hover',kind,label:d.label}); }).on('mousemove',(ev,d)=>{showT(ev,`<strong>${d.label}</strong>${fmt.mbd(d.mbd_2024)}${d.share_2024?` · ${fmt.pct(d.share_2024)}`:''}${d.is_aggregate?'<br>Grouped destination region in the EIA data':''}`);}).on('mouseleave',()=>{ if(!st.flowSelection) flowIframePost({type:'flow-clear-hover'}); hideT();}).on('click',(ev,d)=>{ev.stopPropagation();setFlowSelection(kind,d.label);});
   svg.selectAll('.flow-label').data(rows).join('text').attr('class','bar-label').attr('x',d=>x(d.mbd_2024)+4).attr('y',d=>y(keyFor(d))+y.bandwidth()/2+3).style('font-size','8px').style('font-weight',d=>isSelected(d)?700:400).text(d=>fmt.one(d.mbd_2024));
 }
 

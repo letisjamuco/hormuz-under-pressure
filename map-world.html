@@ -12,7 +12,8 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden}#map{width:100%;height:
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script>
 const worldBounds=[[-85,-180],[85,180]];
-const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,minZoom:1,worldCopyJump:false}).setView([20,40],2);
+const defaultView={center:[20,40],zoom:2};
+const map=L.map('map',{scrollWheelZoom:true,zoomControl:true,minZoom:1,worldCopyJump:false}).setView(defaultView.center,defaultView.zoom);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:10,noWrap:true,bounds:worldBounds,attribution:'© OSM'}).addTo(map);
 const markers={}, positions={}, summaryById=new Map();
 const clearBtn=document.getElementById('clear-selection');
@@ -60,7 +61,7 @@ function updatePopup(pid,name){
     'All ships/day: '+(Number.isFinite(s.avg_total)?(+s.avg_total).toFixed(1):'-')+'</div>');
 }
 function refreshMetric(){ Object.keys(markers).forEach(pid=>{markers[pid].setStyle(styleFor(pid)); updatePopup(pid, summaryById.get(pid)?.portname || pid);}); if(currentSelected) selectChokepoint(currentSelected,false); }
-function clearSelection(post=true){ currentSelected=null; map.closePopup(); refreshMetric(); if(post) window.parent.postMessage({type:'world-map-clear-selection'},'*'); }
+function clearSelection(post=true){ currentSelected=null; map.closePopup(); refreshMetric(); map.setView(defaultView.center, defaultView.zoom, {animate:true, duration:0.75}); if(post) window.parent.postMessage({type:'world-map-clear-selection'},'*'); }
 function selectChokepoint(pid,post){
   currentSelected=pid;
   Object.keys(markers).forEach(k=>{ const style=styleFor(k); if(k===pid){ style.color='#f5c542'; style.fillColor='#f5c542'; style.fillOpacity=.85; style.weight=3; } markers[k].setStyle(style); });
@@ -72,7 +73,9 @@ window.addEventListener('message',ev=>{
   if(ev.data&&ev.data.type==='metric-change'){ currentMetric=ev.data.metric||'avg_tanker'; refreshMetric(); }
   if(ev.data&&ev.data.type==='period-change'){ currentPeriod=ev.data.period||'Before HORMUZ-26'; d3.csv('data/processed/chokepoints_daily.csv',d=>({...d,date:new Date(d.date),n_total:+d.n_total,n_tanker:+d.n_tanker,capacity:+d.capacity})).then(rows=>{ rebuildSummary(rows); refreshMetric(); }); }
   if(ev.data&&ev.data.type==='reset-highlight') clearSelection(false);
+  if(ev.data&&ev.data.type==='invalidate-size'){ setTimeout(()=>map.invalidateSize(true),60); setTimeout(()=>map.invalidateSize(true),220); }
 });
 if(clearBtn) clearBtn.addEventListener('click',()=>clearSelection(true));
+window.addEventListener('resize',()=>{ setTimeout(()=>map.invalidateSize(true),60); });
 </script>
 </body></html>

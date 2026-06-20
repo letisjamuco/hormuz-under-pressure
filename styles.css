@@ -415,9 +415,10 @@ main { padding-top:64px; }
 
 .map-card { position:relative; }
 .map-fullscreen-btn { position:absolute; top:10px; right:10px; z-index:20; border:1px solid rgba(14,74,66,.18); background:rgba(255,255,255,.92); color:var(--ink-deep); border-radius:999px; padding:6px 10px; font-family:var(--font-mono); font-size:.52rem; font-weight:700; box-shadow:0 10px 24px -18px rgba(8,44,40,.45); }
-.map-card:fullscreen, .map-card:-webkit-full-screen { width:100vw; height:100vh; border-radius:0; background:#eef4f1; }
-.map-card:fullscreen iframe, .map-card:-webkit-full-screen iframe { height:calc(100vh - 34px) !important; border-radius:0; }
-.map-card:fullscreen .map-caption, .map-card:-webkit-full-screen .map-caption { border-radius:0; }
+.map-card:fullscreen, .map-card:-webkit-full-screen { width:100vw !important; height:100vh !important; border-radius:0; background:#eef4f1; display:flex; flex-direction:column; }
+.map-card:fullscreen iframe, .map-card:-webkit-full-screen iframe { width:100vw !important; flex:1 1 auto; height:auto !important; min-height:0 !important; border-radius:0; }
+.map-card:fullscreen .map-caption, .map-card:-webkit-full-screen .map-caption { flex:0 0 auto; border-radius:0; }
+.map-card:fullscreen .map-fullscreen-btn, .map-card:-webkit-full-screen .map-fullscreen-btn { top:12px; right:12px; }
 
 .chart--mix-area { height:430px; }
 .vessel-glossary--compact { grid-template-columns:1fr 1fr; }
