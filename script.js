@@ -63,7 +63,7 @@ Promise.all([
   d3.csv(DATA.priceParts,rParts)
 ]).then(([hz,su,chDaily,ba,ev,mk,gn,ga,gd,ga100,gh,glpg,origins,destinations,parts])=>{
   const D={hz,su,chDaily,ba,ev,mk,gn,ga,gd,ga100,gh,glpg,origins,destinations,parts}; window.__DATA__=D;
-  initProgress(); initControls(D); initMapButtons(); initProposalModal(); renderAll(D); fillHero(ba,mk);
+  initProgress(); initControls(D); initMapButtons(); initProposalModal(); initFlowMapBridge(); renderAll(D); fillHero(ba,mk);
   window.addEventListener('resize',debounce(()=>renderAll(D),200));
   window.addEventListener('message',e=>{
     if(e.data?.type==='chokepoint-click') {
@@ -88,7 +88,13 @@ function rParts(d){const o={date:pd(d.date)};['a95_retail','a95_refinery','a95_t
 
 function flowIframePost(message){
   const iframe=document.getElementById('flow-map-iframe');
-  if(iframe) iframe.contentWindow.postMessage(message,'*');
+  if(!iframe || !iframe.contentWindow) return;
+  try{
+    if(typeof iframe.contentWindow.handleFlowMessage==='function') iframe.contentWindow.handleFlowMessage(message);
+    else iframe.contentWindow.postMessage(message,'*');
+  }catch(err){
+    iframe.contentWindow.postMessage(message,'*');
+  }
 }
 function setFlowSelection(kind,label,fromMap=false){
   st.flowSelection=(kind&&label)?{kind,label}:null;
@@ -107,6 +113,14 @@ function setFlowHover(kind,label,fromMap=false){
     if(st.flowHover) flowIframePost({type:'flow-hover',kind,label});
     else flowIframePost({type:'flow-clear-hover'});
   }
+}
+function initFlowMapBridge(){
+  const iframe=document.getElementById('flow-map-iframe');
+  if(!iframe) return;
+  iframe.addEventListener('load',()=>{
+    if(st.flowSelection) flowIframePost({type:'flow-select',kind:st.flowSelection.kind,label:st.flowSelection.label});
+    else flowIframePost({type:'flow-clear-selection'});
+  });
 }
 
 function initControls(D){

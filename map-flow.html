@@ -15,7 +15,7 @@ svg{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
 .focus-point{pointer-events:none}
 .overlay{position:absolute;z-index:5;display:flex;gap:8px;align-items:center}
 .overlay--status{left:12px;top:12px;max-width:min(360px,70%)}
-.overlay--controls{right:12px;top:12px}
+.overlay--controls{right:12px;bottom:12px}
 .pill{padding:8px 10px;border:1px solid rgba(14,74,66,.14);border-radius:999px;background:rgba(255,255,255,.9);box-shadow:0 8px 22px -18px rgba(8,44,40,.38);font:11px/1.35 'Space Mono',ui-monospace,monospace;color:#174f47}
 .pill strong{color:#082c28}
 .pill em{font-style:normal;color:#6d8e86}
@@ -24,7 +24,7 @@ svg{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
 .control-btn:focus-visible{outline:2px solid rgba(15,77,70,.28);outline-offset:2px}
 @media (max-width:720px){
   .overlay--status{max-width:72%;left:10px;top:10px}
-  .overlay--controls{right:10px;top:10px}
+  .overlay--controls{right:10px;bottom:10px}
   .pill,.control-btn{font-size:10px}
 }
 </style>
@@ -102,7 +102,7 @@ function focusParams(kind,label){
   let focus,zoom;
   if(kind==='origin'){
     focus=d3.geoInterpolate(hz,target)(0.5);
-    zoom=1.78;
+    zoom=2.25;
   } else if(label==='Europe'){
     focus=d3.geoInterpolate(hz,target)(0.52);
     zoom=1.18;
@@ -147,20 +147,7 @@ function render(){
       .attr('marker-end',item?'url(#arrow)':'');
     svg.select('#arrow path').attr('fill',routeColor(item));
   }
-  const endpointData=routeEndpoints(item).map((coords,i)=>({coords,i})).filter(d=>projection(d.coords));
-  if(focusSel){
-    focusSel
-      .data(endpointData)
-      .join('circle')
-      .attr('class','focus-point')
-      .attr('cx',d=>projection(d.coords)[0])
-      .attr('cy',d=>projection(d.coords)[1])
-      .attr('r',d=>d.i===0 && item?.kind==='origin' ? 3.6 : 3.2)
-      .attr('fill',item?routeColor(item):'none')
-      .attr('stroke','#fff')
-      .attr('stroke-width',1.1)
-      .attr('opacity',selected ? 0.96 : 0.84);
-  }
+  if(focusSel) focusSel.selectAll('circle').remove();
   updateStatus();
 }
 function resize(){
@@ -216,12 +203,12 @@ function setupScene(world){
   countries=topojson.feature(world,world.objects.countries).features;
   countries.forEach(f=>{f.properties.originLabel=matchOrigin(f.properties);f.properties.destinationLabel=matchDestination(f.properties);});
   borders=topojson.mesh(world,world.objects.countries,(a,b)=>a!==b);
-  countrySel=svg.append('g').selectAll('path').data(countries).join('path').on('mouseenter',(ev,d)=>{const origin=d.properties.originLabel,destination=d.properties.destinationLabel;if(selected) return; if(origin) hoverItem('origin',origin,'map'); else if(destination) hoverItem('destination',destination,'map');}).on('mouseleave',()=>clearHover('map')).on('click',(ev,d)=>{const origin=d.properties.originLabel,destination=d.properties.destinationLabel;if(selected && ((selected.kind==='origin'&&origin===selected.label)||(selected.kind==='destination'&&destination===selected.label))) return; if(origin && (!selected || selected.kind==='origin')) selectItem('origin',origin,'map'); else if(destination) selectItem('destination',destination,'map');});
+  countrySel=svg.append('g').selectAll('path').data(countries).join('path').on('mouseenter',(ev,d)=>{const origin=d.properties.originLabel,destination=d.properties.destinationLabel;if(selected) return; if(origin) hoverItem('origin',origin,'map'); else if(destination) hoverItem('destination',destination,'map');}).on('mouseleave',()=>clearHover('map')).on('click',(ev,d)=>{const origin=d.properties.originLabel,destination=d.properties.destinationLabel;if(origin) selectItem('origin',origin,'map'); else if(destination) selectItem('destination',destination,'map');});
   borderSel=svg.append('path').datum(borders).attr('fill','none').attr('stroke','#fff').attr('stroke-width','.45').attr('pointer-events','none');
   routeSel=svg.append('path').attr('class','route');
   focusSel=svg.append('g');
   svg.call(d3.drag().on('start',()=>container.classList.add('is-dragging')).on('drag',event=>{svg.interrupt('focus'); const r=projection.rotate(); projection.rotate([r[0]+event.dx*.34,r[1]-event.dy*.34,r[2]]); render();}).on('end',()=>container.classList.remove('is-dragging')));
-  zoomBehavior=d3.zoom().scaleExtent([0.88,1.7]).on('zoom',event=>{svg.interrupt('focus'); currentZoom=event.transform.k; render();});
+  zoomBehavior=d3.zoom().scaleExtent([0.88,2.35]).on('zoom',event=>{svg.interrupt('focus'); currentZoom=event.transform.k; render();});
   svg.call(zoomBehavior).call(zoomBehavior.transform,d3.zoomIdentity.scale(1));
   resize();
 }
@@ -241,12 +228,14 @@ Promise.all([
 });
 
 resetBtn.addEventListener('click',()=>clearSelection('map'));
+function handleFlowMessage(message){
+  if(message?.type==='flow-select') selectItem(message.kind,message.label,'parent');
+  if(message?.type==='flow-clear-selection') clearSelection('parent');
+  if(message?.type==='flow-hover') hoverItem(message.kind,message.label,'parent');
+  if(message?.type==='flow-clear-hover') {hovered=null; render();}
+}
+window.handleFlowMessage=handleFlowMessage;
 window.addEventListener('resize',resize);
-window.addEventListener('message',e=>{
-  if(e.data?.type==='flow-select') selectItem(e.data.kind,e.data.label,'parent');
-  if(e.data?.type==='flow-clear-selection') clearSelection('parent');
-  if(e.data?.type==='flow-hover') hoverItem(e.data.kind,e.data.label,'parent');
-  if(e.data?.type==='flow-clear-hover') {hovered=null; render();}
-});
+window.addEventListener('message',e=>handleFlowMessage(e.data));
 </script>
 </body></html>
