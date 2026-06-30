@@ -360,7 +360,7 @@ function renderMixArea(hz){
   addH(svg,data,x,{top:m.top,bottom:m.bottom,left:m.left},H,d=>`<strong>${st.tPeriod==='Full record'?d3.timeFormat('%b %Y')(d.date):fmt.date(d.date)}</strong>Tankers: ${fmt.num(d.n_tanker)}<br>Containers: ${fmt.num(d.n_container)}<br>Dry bulk: ${fmt.num(d.n_dry_bulk)}<br>General cargo: ${fmt.num(d.n_general_cargo)}<br>Ro-Ro: ${fmt.num(d.n_roro)}`);
   const before=raw.filter(d=>d.date<pd('2026-03-01')),after=raw.filter(d=>d.date>=pd('2026-03-01'));
   const bTk=d3.mean(before,d=>d.n_tanker)||0,aTk=d3.mean(after,d=>d.n_tanker)||0;
-  d3.select('#mix-area-read').text(`${st.tPeriod}. Each vessel class has its own panel and all panels share the same y-scale, so you can compare both the size of each class and the post-HORMUZ drop. Ro-Ro is now included as well. Tankers fall from ${fmt.one(bTk)} to ${fmt.one(aTk)} per day after HORMUZ-26.
+  d3.select('#mix-area-read').text(`${st.tPeriod}. Each vessel class has its own panel and all panels share the same y-scale, so you can compare both the size of each class and the post-HORMUZ drop. Tankers fall from ${fmt.one(bTk)} to ${fmt.one(aTk)} per day after HORMUZ-26.
 Source: IMF PortWatch.`);
 }
 
