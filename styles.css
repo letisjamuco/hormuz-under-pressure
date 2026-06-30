@@ -130,11 +130,49 @@ button,select,a,.leaflet-container { cursor:var(--ship-cursor),pointer; }
 .ba-card__after { display:block; font-family:var(--font-display); font-size:1.6rem; color:var(--orange); line-height:.92; margin:2px 0 4px; }
 .ba-card__change { font-family:var(--font-mono); font-size:.6rem; font-weight:700; color:var(--orange); }
 
-.chapter--video { background:rgba(230,245,238,.6); }
-.video-placeholder { margin-top:14px; border:2px dashed var(--sea-tint); border-radius:16px; padding:2rem 1.2rem; display:flex; align-items:center; justify-content:center; }
-.video-placeholder__inner { text-align:center; color:var(--ink-soft); max-width:360px; }
-.video-placeholder__inner svg { color:var(--sea-deep); opacity:.35; margin-bottom:.6rem; }
-.video-placeholder__inner p { font-family:var(--font-mono); font-size:.56rem; text-transform:uppercase; letter-spacing:.08em; line-height:1.55; color:var(--ink-soft); }
+.chapter--video {
+  min-height:auto;
+  padding:86px 0;
+  background:rgba(230,245,238,.6);
+  border-top:1px solid rgba(14,74,66,.12);
+}
+.chapter--video .chapter__copy,
+.chapter--video .chapter__copy--wide,
+.chapter--video .chapter__copy--video {
+  position:static;
+  text-align:left;
+  margin:0 0 24px;
+  max-width:780px;
+}
+.chapter--video .chapter__copy p:not(.chapter__kicker),
+.chapter--video .chapter__copy--wide p:not(.chapter__kicker),
+.chapter--video .chapter__copy--video p:not(.chapter__kicker) {
+  max-width:720px;
+  margin:10px 0 0;
+  color:var(--ink-soft);
+}
+.video-card,
+.video-embed {
+  width:min(100%,1080px);
+  margin:0;
+  aspect-ratio:16 / 9;
+  border-radius:28px;
+  overflow:hidden;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(14,74,66,.14);
+  box-shadow:0 28px 70px -42px rgba(8,44,40,.45);
+}
+.video-card iframe,
+.video-embed iframe {
+  width:100%;
+  height:100%;
+  display:block;
+  border:0;
+}
+@media (max-width:760px) {
+  .video-card,
+  .video-embed { border-radius:20px; }
+}
 
 /* CREDITS */
 .credits { padding:36px 0 28px; border-top:1px solid var(--sea-tint); background:rgba(230,245,238,.6); }
