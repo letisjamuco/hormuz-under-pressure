@@ -243,24 +243,64 @@ function initProgress(){
   const ship=document.querySelector('.nav__ship');
   const nav=document.querySelector('.nav');
   const links=[...document.querySelectorAll('.nav__menu a')];
-  const linkById=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  const hero=document.querySelector('#hero');
   const sections=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
-  function setActive(id){
-    links.forEach(a=>a.classList.toggle('is-active',a.getAttribute('href')===`#${id}`));
-    const link=linkById.get(id); if(!link||!ship||!nav) return;
-    const navRect=nav.getBoundingClientRect(), linkRect=link.getBoundingClientRect();
-    const center=linkRect.left - navRect.left + linkRect.width/2;
-    ship.style.left=`${center}px`;
-    ship.style.transform='translateX(-50%)';
+  if(!ship||!nav||!links.length||!sections.length) return;
+
+  let ticking=false;
+
+  function linkCenter(link){
+    const navRect=nav.getBoundingClientRect();
+    const linkRect=link.getBoundingClientRect();
+    return linkRect.left - navRect.left + linkRect.width/2;
   }
-  let activeId=sections[0]?.id;
-  const io=new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{ if(entry.isIntersecting) activeId=entry.target.id; });
-    if(activeId) setActive(activeId);
-  },{rootMargin:'-35% 0px -50% 0px',threshold:[0,0.2,0.6]});
-  sections.forEach(sec=>io.observe(sec));
-  if(activeId) setActive(activeId);
-  window.addEventListener('resize',()=>{ if(activeId) setActive(activeId); });
+
+  function sectionTop(section){
+    return section.getBoundingClientRect().top + window.scrollY;
+  }
+
+  function updateProgress(){
+    ticking=false;
+    const navRect=nav.getBoundingClientRect();
+    const navHeight=navRect.height || 48;
+    const sectionTops=sections.map(sectionTop);
+    const targetSections=hero ? [hero,...sections] : sections;
+    const tops=targetSections.map(sectionTop);
+    const centers=links.map(linkCenter);
+    const positions=hero ? [18,...centers] : centers;
+    const y=window.scrollY + navHeight + 18;
+
+    let i=0;
+    while(i<tops.length-1 && y>=tops[i+1]) i++;
+
+    let x=positions[i];
+    if(i<tops.length-1){
+      const span=Math.max(1,tops[i+1]-tops[i]);
+      const t=Math.max(0,Math.min(1,(y-tops[i])/span));
+      x=positions[i] + (positions[i+1]-positions[i])*t;
+    }
+
+    x=Math.max(18,Math.min(navRect.width-18,x));
+    ship.style.left=`${x}px`;
+    ship.style.transform='translateX(-50%)';
+
+    let activeIndex=-1;
+    for(let j=0;j<sectionTops.length;j++){
+      if(y>=sectionTops[j]) activeIndex=j;
+    }
+    links.forEach((a,idx)=>a.classList.toggle('is-active',idx===activeIndex));
+  }
+
+  function requestUpdate(){
+    if(ticking) return;
+    ticking=true;
+    requestAnimationFrame(updateProgress);
+  }
+
+  updateProgress();
+  window.addEventListener('scroll',requestUpdate,{passive:true});
+  window.addEventListener('resize',requestUpdate);
+  window.addEventListener('hashchange',requestUpdate);
 }
 function fillHero(ba,mk){const b=ba.find(d=>d.period.startsWith('Before')),a=ba.find(d=>d.period.startsWith('After'));const tc=document.getElementById('hero-transit-change');const hb=document.getElementById('hero-brent');if(tc&&b&&a){tc.textContent=`${fmt.sp(a.avg_total_transits_per_day/b.avg_total_transits_per_day-1)} daily`;}const p=mk.filter(d=>d.date>=pd('2026-01-01')&&d.brent);if(hb&&p.length){hb.textContent=`${fmt.usd(p[p.length-1].brent)}/bbl`;}}
 

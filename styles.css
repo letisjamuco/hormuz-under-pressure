@@ -6,13 +6,18 @@
   --font-display: "Bebas Neue", sans-serif;
   --font-mono: "Space Mono", monospace;
   --font-serif: "Crimson Pro", serif;
-  --ship-cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='16' viewBox='0 0 36 20'><path fill='%230f4d46' d='M2 12 L6 12 L6 6 L9 3 L28 3 L31 6 L31 12 L34 12 L30 18 L6 18 L2 12Z'/></svg>") 14 10;
+  --ship-cursor: url("ship-cursor.png") 18 8, pointer;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin:0; color:var(--ink-mid); font-family:var(--font-serif); font-size:15px; background: radial-gradient(circle at top left,rgba(189,231,216,.7),transparent 30rem), radial-gradient(circle at 80% 12%,rgba(244,237,220,.8),transparent 32rem), linear-gradient(180deg,#eaf8f2,#f7fbf5 45%,#e8f3ea); overflow-x:hidden; }
 a { color:inherit; }
-button,select,a,.leaflet-container { cursor:var(--ship-cursor),pointer; }
+button,select,a,.leaflet-container { cursor:var(--ship-cursor); }
+/* Custom tanker cursor for all clickable controls and SVG marks */
+button, select, a, [role="button"], .leaflet-container, .map-fullscreen-btn, .control-pills button, .flow-bar, .nm, .mix-layer, #rank-chart rect[data-portid], .pdf-modal__close, .text-button {
+  cursor: var(--ship-cursor) !important;
+}
+
 .container { width:min(1100px,calc(100vw - 28px)); margin:0 auto; }
 
 /* NAV */
@@ -26,7 +31,7 @@ button,select,a,.leaflet-container { cursor:var(--ship-cursor),pointer; }
 .nav__menu a:hover { background:rgba(15,77,70,.07); }
 .nav__progress { position:absolute; left:18px; right:18px; bottom:-1px; height:2px; pointer-events:none; }
 .nav__progress-track { position:absolute; inset:0; background:rgba(15,77,70,.07); }
-.nav__ship { position:absolute; bottom:-8px; left:0; color:var(--sea-deep); transform:translateX(-10px); filter:drop-shadow(0 1px 0 white); }
+.nav__ship { position:absolute; bottom:-12px; left:0; width:42px; height:auto; transform:translateX(-50%); filter:drop-shadow(0 1px 0 white) drop-shadow(0 3px 5px rgba(8,44,40,.22)); will-change:left; }
 
 /* HERO */
 .hero { padding:48px 0 28px; }
@@ -267,9 +272,9 @@ button,select,a,.leaflet-container { cursor:var(--ship-cursor),pointer; }
 .map-iframe--greece { height:840px; }
 .chart--nomos-full { height:780px; }
 .nomos-axis text { letter-spacing:-.02em; }
-.flow-bar { cursor:pointer; }
-.nm { cursor:pointer; }
-.mix-layer { cursor:crosshair; }
+.flow-bar { cursor:var(--ship-cursor) !important; }
+.nm { cursor:var(--ship-cursor) !important; }
+.mix-layer { cursor:var(--ship-cursor) !important; }
 
 @media (max-width:980px) {
   .ch2-linked-grid,.ch5-flow-grid,.ch6-map-rank-grid { grid-template-columns:1fr; }
@@ -337,7 +342,7 @@ button,select,a,.leaflet-container { cursor:var(--ship-cursor),pointer; }
 .nav__menu a.is-active { background:rgba(15,77,70,.08); color:var(--ink-deep); }
 .nav__progress { left:0; right:0; bottom:-1px; height:8px; }
 .nav__progress-track { left:18px; right:18px; top:3px; height:1px; }
-.nav__ship { transition:left .28s ease, transform .28s ease; bottom:-7px; }
+.nav__ship { bottom:-13px; width:44px; transition:none; }
 .hero__actions { flex-wrap:wrap; }
 .controls-stack--nomos { align-items:flex-end; }
 @media (max-width:980px){
@@ -589,7 +594,7 @@ main { padding-top:64px; }
   font-size:.5rem;
   font-weight:700;
   letter-spacing:.02em;
-  cursor:pointer;
+  cursor:var(--ship-cursor);
 }
 #ch2 .btn-reset:hover { color:var(--ink-deep); border-color:rgba(14,74,66,.28); }
 
@@ -686,7 +691,7 @@ main { padding-top:64px; }
   font-family: var(--font-mono);
   font-size: .62rem;
   font-weight: 700;
-  cursor: pointer;
+  cursor: var(--ship-cursor);
 }
 .pdf-modal__close:hover,
 .text-button:hover { border-color: rgba(14, 74, 66, .35); }
